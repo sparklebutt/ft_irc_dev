@@ -462,7 +462,7 @@
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-55" value="Orgchart socket" style="swimlane;startSize=30;horizontal=1;containerType=tree;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};fillColor=#b0e3e6;strokeColor=#0e8088;swimlaneFillColor=default;" vertex="1" collapsed="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="-390" y="310" width="130" height="30" as="geometry">
-            <mxRectangle x="-390" y="400" width="157" height="375" as="alternateBounds" />
+            <mxRectangle x="-390" y="310" width="157" height="375" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-56" value="" style="edgeStyle=elbowEdgeStyle;elbow=vertical;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;startArrow=none;endArrow=none;rounded=0;curved=0;" edge="1" parent="5MD_yXAeS-COMyXmqL5d-55" source="5MD_yXAeS-COMyXmqL5d-58" target="5MD_yXAeS-COMyXmqL5d-59">
@@ -564,6 +564,9 @@
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-153" value="events , non user sent in actionable happenings.&lt;div&gt;sudden disconnect&lt;/div&gt;&lt;div&gt;network down in general&lt;/div&gt;&lt;div&gt;combining poll() POLLERR and POLLHUP with ping/pong we can handle some.&lt;br&gt;Unexpected Client Behavior (Flooding, Disconnects Without Notice)&lt;/div&gt;&lt;div&gt;idle timeout.&lt;/div&gt;&lt;div&gt;server initiated ping???&lt;/div&gt;&lt;div&gt;flood protection.&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="-270" y="695" width="270" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-167" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=none;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=0.077;entryY=0.267;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="5MD_yXAeS-COMyXmqL5d-55" target="5MD_yXAeS-COMyXmqL5d-55">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
