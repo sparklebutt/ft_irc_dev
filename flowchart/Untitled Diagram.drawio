@@ -292,7 +292,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-81" value="Orgchart client creation (default)" style="swimlane;startSize=20;horizontal=1;containerType=tree;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};fillColor=#b0e3e6;strokeColor=#0e8088;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="-710" y="140" width="280" height="312" as="geometry" />
+          <mxGeometry x="-720" y="100" width="280" height="312" as="geometry" />
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-82" value="" style="edgeStyle=elbowEdgeStyle;elbow=vertical;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;startArrow=none;endArrow=none;rounded=0;curved=0;" edge="1" parent="5MD_yXAeS-COMyXmqL5d-81" source="5MD_yXAeS-COMyXmqL5d-84" target="5MD_yXAeS-COMyXmqL5d-85">
           <mxGeometry relative="1" as="geometry" />
