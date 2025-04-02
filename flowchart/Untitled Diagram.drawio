@@ -235,16 +235,24 @@
         <mxCell id="5MD_yXAeS-COMyXmqL5d-26" value="sends a command that client has formatted" style="html=1;shadow=0;dashed=0;align=center;verticalAlign=middle;shape=mxgraph.arrows2.arrow;dy=0;dx=10;notch=0;rotation=0;flipH=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="497.5" y="350" width="295" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="5MD_yXAeS-COMyXmqL5d-37" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="5MD_yXAeS-COMyXmqL5d-27" target="5MD_yXAeS-COMyXmqL5d-67">
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-37" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="5MD_yXAeS-COMyXmqL5d-94" target="5MD_yXAeS-COMyXmqL5d-67">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="60" y="960" as="sourcePoint" />
+            <mxPoint x="-950" y="1020" as="sourcePoint" />
             <mxPoint x="110" y="910" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="-900" y="1030" />
+              <mxPoint x="-440" y="1030" />
+            </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="5MD_yXAeS-COMyXmqL5d-38" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="5MD_yXAeS-COMyXmqL5d-27" target="5MD_yXAeS-COMyXmqL5d-66">
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-38" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" target="5MD_yXAeS-COMyXmqL5d-66">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="40" y="970" as="sourcePoint" />
+            <mxPoint x="-970" y="830" as="sourcePoint" />
             <mxPoint x="190" y="610" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="-920" y="1050" />
+              <mxPoint x="-430" y="1050" />
+            </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-39" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;exitX=0.982;exitY=0.09;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="5MD_yXAeS-COMyXmqL5d-66" target="6PssmGfSwWKb-5sigFfC-50">
@@ -368,27 +376,21 @@
             <mxGeometry x="80" y="40" width="120" height="60" as="geometry" />
           </mxCell>
         </UserObject>
-        <UserObject label="parse buffer data&amp;nbsp;" treeRoot="1" id="5MD_yXAeS-COMyXmqL5d-142">
+        <UserObject label="parse to send to correct window/location.&lt;div&gt;to user (priv msg)&lt;/div&gt;&lt;div&gt;or to channel (which channel)&lt;/div&gt;" treeRoot="1" id="5MD_yXAeS-COMyXmqL5d-142">
           <mxCell style="whiteSpace=wrap;html=1;align=center;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" vertex="1" parent="5MD_yXAeS-COMyXmqL5d-94">
-            <mxGeometry x="20" y="347.5" width="120" height="60" as="geometry" />
+            <mxGeometry x="160" y="501.25" width="120" height="112.5" as="geometry" />
           </mxCell>
         </UserObject>
         <UserObject label="handle buffer data" treeRoot="1" id="5MD_yXAeS-COMyXmqL5d-143">
           <mxCell style="whiteSpace=wrap;html=1;align=center;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" vertex="1" parent="5MD_yXAeS-COMyXmqL5d-94">
-            <mxGeometry x="20" y="427.5" width="120" height="60" as="geometry" />
+            <mxGeometry x="20" y="527.5" width="120" height="60" as="geometry" />
           </mxCell>
         </UserObject>
-        <UserObject label="" treeRoot="1" id="5MD_yXAeS-COMyXmqL5d-144">
+        <UserObject label="send to instance of client for handling&amp;nbsp;" treeRoot="1" id="5MD_yXAeS-COMyXmqL5d-144">
           <mxCell style="whiteSpace=wrap;html=1;align=center;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" vertex="1" parent="5MD_yXAeS-COMyXmqL5d-94">
-            <mxGeometry x="20" y="517.5" width="120" height="60" as="geometry" />
+            <mxGeometry x="130" y="167.5" width="120" height="60" as="geometry" />
           </mxCell>
         </UserObject>
-        <mxCell id="5MD_yXAeS-COMyXmqL5d-145" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=none;exitX=1;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="5MD_yXAeS-COMyXmqL5d-94">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="120" y="207.5" as="sourcePoint" />
-            <mxPoint x="150" y="267.5" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-100" value="poll() checks for new data&lt;div&gt;loop through pollfd to find POLLIN&lt;/div&gt;&lt;div&gt;once found we can extract socket number and new data using recv()&lt;/div&gt;" style="shape=dataStorage;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="-780" y="460" width="420" height="80" as="geometry" />
         </mxCell>
@@ -405,7 +407,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-27" value="client class action" style="swimlane;startSize=20;horizontal=1;containerType=tree;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};fillColor=#b0e3e6;strokeColor=#0e8088;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="-710" y="580" width="280" height="440" as="geometry" />
+          <mxGeometry x="-720" y="555" width="280" height="440" as="geometry" />
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-28" value="" style="edgeStyle=elbowEdgeStyle;elbow=vertical;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;startArrow=none;endArrow=none;rounded=0;curved=0;" edge="1" parent="5MD_yXAeS-COMyXmqL5d-27" source="5MD_yXAeS-COMyXmqL5d-30" target="5MD_yXAeS-COMyXmqL5d-31">
           <mxGeometry relative="1" as="geometry" />
@@ -422,10 +424,10 @@
           <mxGeometry x="20" y="260" width="100" height="60" as="geometry" />
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-32" value="changing data and clean up" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" vertex="1" parent="5MD_yXAeS-COMyXmqL5d-27">
-          <mxGeometry x="170" y="235" width="100" height="60" as="geometry" />
+          <mxGeometry x="80" y="180" width="100" height="60" as="geometry" />
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-35" value="format output" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" vertex="1" parent="5MD_yXAeS-COMyXmqL5d-27">
-          <mxGeometry x="180" y="380" width="100" height="60" as="geometry" />
+          <mxGeometry y="380" width="100" height="60" as="geometry" />
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-36" value="" style="endArrow=none;html=1;rounded=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="5MD_yXAeS-COMyXmqL5d-27" source="5MD_yXAeS-COMyXmqL5d-35" target="5MD_yXAeS-COMyXmqL5d-31">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
@@ -522,6 +524,24 @@
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-141" value="&lt;div&gt;Example Using a Map for Faster Lookups&lt;/div&gt;&lt;div&gt;Instead of looping manually, you could store clients in a std::unordered_map&amp;lt;int, Client&amp;gt;, where the key is the socket ID: this is apposed to storing the socket_id in the client&amp;nbsp;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="35" y="660" width="490" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-149" value="" style="endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.989;entryY=0.112;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="5MD_yXAeS-COMyXmqL5d-35" target="5MD_yXAeS-COMyXmqL5d-142">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-810" y="910" as="sourcePoint" />
+            <mxPoint x="-920" y="510" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-150" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.005;exitY=0.354;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="5MD_yXAeS-COMyXmqL5d-100" target="5MD_yXAeS-COMyXmqL5d-97">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-800" y="480" as="sourcePoint" />
+            <mxPoint x="-930" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-151" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="5MD_yXAeS-COMyXmqL5d-144" target="5MD_yXAeS-COMyXmqL5d-30">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-930" y="430" as="sourcePoint" />
+            <mxPoint x="-860" y="520" as="targetPoint" />
+          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>
