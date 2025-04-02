@@ -355,6 +355,9 @@
             <mxPoint x="230" y="167.5" as="targetPoint" />
           </mxGeometry>
         </mxCell>
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-165" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=none;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="5MD_yXAeS-COMyXmqL5d-94" source="5MD_yXAeS-COMyXmqL5d-97" target="5MD_yXAeS-COMyXmqL5d-164">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <UserObject label="loop through pollfds find an active socket , then match active socket to a client" treeRoot="1" id="5MD_yXAeS-COMyXmqL5d-97">
           <mxCell style="whiteSpace=wrap;html=1;align=center;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" vertex="1" parent="5MD_yXAeS-COMyXmqL5d-94">
             <mxGeometry x="70" y="40" width="120" height="60" as="geometry" />
@@ -374,7 +377,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-155" value="handle any POLLERR or POLLHUP here&amp;nbsp;" style="html=1;dashed=0;whiteSpace=wrap;" vertex="1" parent="5MD_yXAeS-COMyXmqL5d-94">
-          <mxGeometry x="80" y="150" width="100" height="50" as="geometry" />
+          <mxGeometry x="140" y="150" width="100" height="50" as="geometry" />
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-157" value="" style="edgeStyle=elbowEdgeStyle;elbow=vertical;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;startArrow=none;endArrow=none;rounded=0;curved=0;entryX=0.628;entryY=-0.008;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="5MD_yXAeS-COMyXmqL5d-94" source="5MD_yXAeS-COMyXmqL5d-97" target="5MD_yXAeS-COMyXmqL5d-155">
           <mxGeometry relative="1" as="geometry">
@@ -383,15 +386,15 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-158" value="no err" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="5MD_yXAeS-COMyXmqL5d-94">
-          <mxGeometry x="140" y="230" width="50" height="60" as="geometry" />
+          <mxGeometry x="175" y="230" width="50" height="60" as="geometry" />
         </mxCell>
         <UserObject label="handle related issue&amp;nbsp;" treeRoot="1" id="5MD_yXAeS-COMyXmqL5d-159">
           <mxCell style="whiteSpace=wrap;html=1;align=center;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" vertex="1" parent="5MD_yXAeS-COMyXmqL5d-94">
-            <mxGeometry x="10" y="312" width="120" height="60" as="geometry" />
+            <mxGeometry y="430" width="120" height="60" as="geometry" />
           </mxCell>
         </UserObject>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-161" value="poll err" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="5MD_yXAeS-COMyXmqL5d-94">
-          <mxGeometry x="30" y="217" width="50" height="60" as="geometry" />
+          <mxGeometry x="60" y="295" width="50" height="60" as="geometry" />
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-162" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="5MD_yXAeS-COMyXmqL5d-94" source="5MD_yXAeS-COMyXmqL5d-155" target="5MD_yXAeS-COMyXmqL5d-161">
           <mxGeometry relative="1" as="geometry">
@@ -399,6 +402,14 @@
             <mxPoint x="-1120" y="542" as="targetPoint" />
           </mxGeometry>
         </mxCell>
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-166" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="5MD_yXAeS-COMyXmqL5d-94" source="5MD_yXAeS-COMyXmqL5d-164" target="5MD_yXAeS-COMyXmqL5d-159">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <UserObject label="check non command (client side) errors like no pong" treeRoot="1" id="5MD_yXAeS-COMyXmqL5d-164">
+          <mxCell style="whiteSpace=wrap;html=1;align=center;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" vertex="1" parent="5MD_yXAeS-COMyXmqL5d-94">
+            <mxGeometry y="140" width="90" height="70" as="geometry" />
+          </mxCell>
+        </UserObject>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-100" value="poll() checks for new data&lt;div&gt;loop through pollfd to find POLLIN&lt;/div&gt;&lt;div&gt;once found we can extract socket number and new data using recv()&lt;/div&gt;" style="shape=dataStorage;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="-780" y="460" width="420" height="80" as="geometry" />
         </mxCell>
