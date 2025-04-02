@@ -527,7 +527,7 @@
             <mxPoint x="-860" y="520" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="5MD_yXAeS-COMyXmqL5d-153" value="events , non user sent in actionable happenings.&lt;div&gt;sudden disconnect&lt;/div&gt;&lt;div&gt;network down in general&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-153" value="events , non user sent in actionable happenings.&lt;div&gt;sudden disconnect&lt;/div&gt;&lt;div&gt;network down in general&lt;/div&gt;&lt;div&gt;combining poll() POLLERR and POLLHUP with ping/pong we can handle some.&lt;br&gt;Unexpected Client Behavior (Flooding, Disconnects Without Notice)&lt;/div&gt;&lt;div&gt;idle timeout.&lt;/div&gt;&lt;div&gt;server initiated ping???&lt;/div&gt;&lt;div&gt;flood protection.&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="-270" y="695" width="270" height="270" as="geometry" />
         </mxCell>
       </root>
