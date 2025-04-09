@@ -292,9 +292,6 @@
             <mxPoint x="-370" y="330" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="5MD_yXAeS-COMyXmqL5d-88" value="" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
-          <mxGeometry x="-1050" y="-156" width="100" height="60" as="geometry" />
-        </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-89" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#8DDA2B;exitX=1.007;exitY=0.65;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="5MD_yXAeS-COMyXmqL5d-85" target="5MD_yXAeS-COMyXmqL5d-55" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="-440" y="510" as="sourcePoint" />
@@ -508,7 +505,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-81" value="Orgchart client creation" style="swimlane;startSize=20;horizontal=1;containerType=tree;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};fillColor=#b0e3e6;strokeColor=#0e8088;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
-          <mxGeometry x="-775" y="70" width="330" height="440" as="geometry" />
+          <mxGeometry x="-770" y="20" width="330" height="440" as="geometry" />
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-82" value="" style="edgeStyle=elbowEdgeStyle;elbow=vertical;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;startArrow=none;endArrow=none;rounded=0;curved=0;" parent="5MD_yXAeS-COMyXmqL5d-81" source="5MD_yXAeS-COMyXmqL5d-84" target="5MD_yXAeS-COMyXmqL5d-85" edge="1">
           <mxGeometry relative="1" as="geometry" />
@@ -522,7 +519,7 @@
           </mxCell>
         </UserObject>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-85" value="socket" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" parent="5MD_yXAeS-COMyXmqL5d-81" vertex="1">
-          <mxGeometry x="180" y="140" width="100" height="60" as="geometry" />
+          <mxGeometry x="130" y="240" width="100" height="60" as="geometry" />
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-86" value="set up identifiers like ip , socket data&amp;nbsp;" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" parent="5MD_yXAeS-COMyXmqL5d-81" vertex="1">
           <mxGeometry x="10" y="140" width="100" height="60" as="geometry" />
@@ -532,6 +529,9 @@
             <mxPoint x="70.30000000000018" y="200.00000000000017" as="targetPoint" />
             <mxPoint x="70" y="245.68" as="sourcePoint" />
           </mxGeometry>
+        </mxCell>
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-88" value="apply modes and permissions" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" parent="5MD_yXAeS-COMyXmqL5d-81" vertex="1">
+          <mxGeometry x="25" y="240" width="100" height="60" as="geometry" />
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-48" value="Orgchart (before server running)setup" style="swimlane;startSize=20;horizontal=1;containerType=tree;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};fillColor=#b0e3e6;swimlaneFillColor=default;glass=0;shadow=0;fillStyle=auto;strokeColor=#0e8088;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="-680" y="-576" width="363" height="480" as="geometry">
