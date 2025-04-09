@@ -237,8 +237,8 @@
             <mxPoint x="-950" y="1020" as="sourcePoint" />
             <mxPoint x="110" y="910" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="-900" y="1030" />
-              <mxPoint x="-440" y="1030" />
+              <mxPoint x="-900" y="1090" />
+              <mxPoint x="-470" y="1100" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -247,7 +247,8 @@
             <mxPoint x="-970" y="830" as="sourcePoint" />
             <mxPoint x="190" y="610" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="-920" y="1050" />
+              <mxPoint x="-930" y="1130" />
+              <mxPoint x="-450" y="1120" />
               <mxPoint x="-430" y="1050" />
             </Array>
           </mxGeometry>
@@ -289,34 +290,6 @@
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="-293.34000000000015" y="459" as="sourcePoint" />
             <mxPoint x="-370" y="330" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="5MD_yXAeS-COMyXmqL5d-81" value="Orgchart client creation (default)" style="swimlane;startSize=20;horizontal=1;containerType=tree;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};fillColor=#b0e3e6;strokeColor=#0e8088;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
-          <mxGeometry x="-720" y="100" width="280" height="312" as="geometry" />
-        </mxCell>
-        <mxCell id="5MD_yXAeS-COMyXmqL5d-82" value="" style="edgeStyle=elbowEdgeStyle;elbow=vertical;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;startArrow=none;endArrow=none;rounded=0;curved=0;" parent="5MD_yXAeS-COMyXmqL5d-81" source="5MD_yXAeS-COMyXmqL5d-84" target="5MD_yXAeS-COMyXmqL5d-85" edge="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="5MD_yXAeS-COMyXmqL5d-83" value="" style="edgeStyle=elbowEdgeStyle;elbow=vertical;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;startArrow=none;endArrow=none;rounded=0;curved=0;" parent="5MD_yXAeS-COMyXmqL5d-81" source="5MD_yXAeS-COMyXmqL5d-84" target="5MD_yXAeS-COMyXmqL5d-86" edge="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <UserObject label="instantiate client/user class" treeRoot="1" id="5MD_yXAeS-COMyXmqL5d-84">
-          <mxCell style="whiteSpace=wrap;html=1;align=center;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" parent="5MD_yXAeS-COMyXmqL5d-81" vertex="1">
-            <mxGeometry x="80" y="40" width="120" height="60" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <mxCell id="5MD_yXAeS-COMyXmqL5d-85" value="socket" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" parent="5MD_yXAeS-COMyXmqL5d-81" vertex="1">
-          <mxGeometry x="180" y="140" width="100" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="5MD_yXAeS-COMyXmqL5d-86" value="set up&amp;nbsp; a default user with some identifier (eg ip addr)" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" parent="5MD_yXAeS-COMyXmqL5d-81" vertex="1">
-          <mxGeometry x="10" y="140" width="100" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="5MD_yXAeS-COMyXmqL5d-104" value="update poll()" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" parent="5MD_yXAeS-COMyXmqL5d-81" vertex="1">
-          <mxGeometry x="10" y="230" width="100" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="5MD_yXAeS-COMyXmqL5d-105" value="" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;elbow=horizontal;startArrow=none;endArrow=none;entryX=0.413;entryY=1.072;entryDx=0;entryDy=0;entryPerimeter=0;" parent="5MD_yXAeS-COMyXmqL5d-81" source="5MD_yXAeS-COMyXmqL5d-104" target="5MD_yXAeS-COMyXmqL5d-86" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="-50" y="156" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-88" value="cross reference required data (eg, nick name already exists)" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
@@ -411,7 +384,7 @@
           </mxCell>
         </UserObject>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-100" value="poll() checks for new data&lt;div&gt;loop through pollfd to find POLLIN&lt;/div&gt;&lt;div&gt;once found we can extract socket number and new data using recv()&lt;/div&gt;" style="shape=dataStorage;whiteSpace=wrap;html=1;fixedSize=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
-          <mxGeometry x="-780" y="460" width="420" height="80" as="geometry" />
+          <mxGeometry x="-780" y="530" width="420" height="80" as="geometry" />
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-101" value="" style="endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.939;entryY=0.237;entryDx=0;entryDy=0;entryPerimeter=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="5MD_yXAeS-COMyXmqL5d-66" target="5MD_yXAeS-COMyXmqL5d-100" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
@@ -426,7 +399,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-27" value="client class action" style="swimlane;startSize=20;horizontal=1;containerType=tree;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};fillColor=#b0e3e6;strokeColor=#0e8088;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
-          <mxGeometry x="-720" y="555" width="280" height="440" as="geometry" />
+          <mxGeometry x="-750" y="620" width="280" height="440" as="geometry" />
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-28" value="" style="edgeStyle=elbowEdgeStyle;elbow=vertical;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;startArrow=none;endArrow=none;rounded=0;curved=0;" parent="5MD_yXAeS-COMyXmqL5d-27" source="5MD_yXAeS-COMyXmqL5d-30" target="5MD_yXAeS-COMyXmqL5d-31" edge="1">
           <mxGeometry relative="1" as="geometry" />
@@ -489,7 +462,7 @@
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-48" value="Orgchart (before server running)setup" style="swimlane;startSize=20;horizontal=1;containerType=tree;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};fillColor=#b0e3e6;swimlaneFillColor=default;glass=0;shadow=0;fillStyle=auto;strokeColor=#0e8088;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1" collapsed="1">
           <mxGeometry x="-542" width="240" height="30" as="geometry">
-            <mxRectangle x="-540" width="363" height="480" as="alternateBounds" />
+            <mxRectangle x="-542" width="363" height="480" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-49" value="" style="edgeStyle=elbowEdgeStyle;elbow=vertical;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;startArrow=none;endArrow=none;rounded=0;curved=0;" parent="5MD_yXAeS-COMyXmqL5d-48" source="5MD_yXAeS-COMyXmqL5d-51" target="5MD_yXAeS-COMyXmqL5d-52" edge="1">
@@ -503,31 +476,17 @@
             <mxGeometry x="80" y="40" width="120" height="60" as="geometry" />
           </mxCell>
         </UserObject>
-        <mxCell id="5MD_yXAeS-COMyXmqL5d-125" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="5MD_yXAeS-COMyXmqL5d-48" source="5MD_yXAeS-COMyXmqL5d-52" target="5MD_yXAeS-COMyXmqL5d-107" edge="1">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-125" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="5MD_yXAeS-COMyXmqL5d-48" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="271" y="150" as="sourcePoint" />
+            <mxPoint x="363" y="220" as="targetPoint" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-52" value="instantiate server class" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" parent="5MD_yXAeS-COMyXmqL5d-48" vertex="1">
           <mxGeometry x="20" y="140" width="100" height="60" as="geometry" />
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-53" value="maybe a config file?" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" parent="5MD_yXAeS-COMyXmqL5d-48" vertex="1">
           <mxGeometry x="160" y="140" width="100" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="5MD_yXAeS-COMyXmqL5d-118" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=none;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="5MD_yXAeS-COMyXmqL5d-48" source="5MD_yXAeS-COMyXmqL5d-107" target="5MD_yXAeS-COMyXmqL5d-107" edge="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="5MD_yXAeS-COMyXmqL5d-107" value="set up poll()" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="5MD_yXAeS-COMyXmqL5d-48" vertex="1">
-          <mxGeometry x="20" y="232.5" width="300" height="190" as="geometry">
-            <mxRectangle x="20" y="232.5" width="100" height="30" as="alternateBounds" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="5MD_yXAeS-COMyXmqL5d-108" value="create an array of structs for sockets/fds&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; struct pollfd {&lt;/span&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; int fd;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;// File descriptor to check&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; short events;&amp;nbsp; &amp;nbsp;// Events to check for&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; short revents;&amp;nbsp; // Events that occurred&lt;/div&gt;&lt;div&gt;};&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="5MD_yXAeS-COMyXmqL5d-107" vertex="1">
-          <mxGeometry y="30" width="300" height="100" as="geometry" />
-        </mxCell>
-        <mxCell id="5MD_yXAeS-COMyXmqL5d-109" value="set up chosen event detetection POLLIN | POLLERR | PLLHUP (for example)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="5MD_yXAeS-COMyXmqL5d-107" vertex="1">
-          <mxGeometry y="130" width="300" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="5MD_yXAeS-COMyXmqL5d-110" value="pushback to the array so we have added the new element to array" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="5MD_yXAeS-COMyXmqL5d-107" vertex="1">
-          <mxGeometry y="160" width="300" height="30" as="geometry" />
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-137" value="some functions" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="140.15" y="533" width="300" height="104" as="geometry" />
@@ -567,6 +526,52 @@
         </mxCell>
         <mxCell id="5MD_yXAeS-COMyXmqL5d-167" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=none;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=0.077;entryY=0.267;entryDx=0;entryDy=0;entryPerimeter=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="5MD_yXAeS-COMyXmqL5d-55" target="5MD_yXAeS-COMyXmqL5d-55" edge="1">
           <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-104" value="update poll()" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-970" y="90" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-81" value="Orgchart client creation (default)" style="swimlane;startSize=20;horizontal=1;containerType=tree;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};fillColor=#b0e3e6;strokeColor=#0e8088;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="-775" y="70" width="330" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-82" value="" style="edgeStyle=elbowEdgeStyle;elbow=vertical;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;startArrow=none;endArrow=none;rounded=0;curved=0;" parent="5MD_yXAeS-COMyXmqL5d-81" source="5MD_yXAeS-COMyXmqL5d-84" target="5MD_yXAeS-COMyXmqL5d-85" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-83" value="" style="edgeStyle=elbowEdgeStyle;elbow=vertical;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;startArrow=none;endArrow=none;rounded=0;curved=0;" parent="5MD_yXAeS-COMyXmqL5d-81" source="5MD_yXAeS-COMyXmqL5d-84" target="5MD_yXAeS-COMyXmqL5d-86" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <UserObject label="instantiate client/user class" treeRoot="1" id="5MD_yXAeS-COMyXmqL5d-84">
+          <mxCell style="whiteSpace=wrap;html=1;align=center;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" parent="5MD_yXAeS-COMyXmqL5d-81" vertex="1">
+            <mxGeometry x="80" y="40" width="120" height="60" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-85" value="socket" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" parent="5MD_yXAeS-COMyXmqL5d-81" vertex="1">
+          <mxGeometry x="180" y="140" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-86" value="set up&amp;nbsp; a default user with some identifier (eg ip addr)" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;treeFolding=1;treeMoving=1;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;startArrow&quot;:&quot;none&quot;,&quot;endArrow&quot;:&quot;none&quot;};" parent="5MD_yXAeS-COMyXmqL5d-81" vertex="1">
+          <mxGeometry x="10" y="140" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-105" value="" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;elbow=horizontal;startArrow=none;endArrow=none;entryX=0.413;entryY=1.072;entryDx=0;entryDy=0;entryPerimeter=0;" parent="5MD_yXAeS-COMyXmqL5d-81" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="70.30000000000018" y="200.00000000000017" as="targetPoint" />
+            <mxPoint x="70" y="245.68" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-118" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;endArrow=none;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="5MD_yXAeS-COMyXmqL5d-81" source="5MD_yXAeS-COMyXmqL5d-107" target="5MD_yXAeS-COMyXmqL5d-107" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-107" value="set up poll()" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="5MD_yXAeS-COMyXmqL5d-81" vertex="1">
+          <mxGeometry x="10" y="230" width="300" height="190" as="geometry">
+            <mxRectangle x="20" y="232.5" width="100" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-108" value="create an array of structs for sockets/fds&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&amp;nbsp; &amp;nbsp; struct pollfd {&lt;/span&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; int fd;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;// File descriptor to check&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; short events;&amp;nbsp; &amp;nbsp;// Events to check for&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; short revents;&amp;nbsp; // Events that occurred&lt;/div&gt;&lt;div&gt;};&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="5MD_yXAeS-COMyXmqL5d-107" vertex="1">
+          <mxGeometry y="30" width="300" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-109" value="set up chosen event detetection POLLIN | POLLERR | PLLHUP (for example)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="5MD_yXAeS-COMyXmqL5d-107" vertex="1">
+          <mxGeometry y="130" width="300" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="5MD_yXAeS-COMyXmqL5d-110" value="pushback to the array so we have added the new element to array" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="5MD_yXAeS-COMyXmqL5d-107" vertex="1">
+          <mxGeometry y="160" width="300" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
