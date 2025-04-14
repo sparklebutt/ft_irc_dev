@@ -47,7 +47,7 @@ int main(int argc, char** argv)
 
 	
 	// Communication between client and server has to be done via TCP/IP (v4 or v6)
-	int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+	int server_fd = socket(AF_INET, SOCK_STREAM, 0);
 	// 1. ipv4  2.what type of socket (we want stream), 3. for auto type (this case its tcp )
 	if (server_fd == -1)
 		std:::cout<<"something went wrong"<<std::endl;
@@ -76,8 +76,10 @@ int main(int argc, char** argv)
         close(server_fd);
         return 1;
     }
+	std::cout << "Server is listening on port 8080 (non-blocking mode)..." << std::endl;
+	epoll(); // add server_fd
+	loop(); //begin server loop
 
-    std::cout << "Server is listening on port 8080 (non-blocking mode)..." << std::endl;
 
     // 5. Close socket (example only)
     close(server_fd);
@@ -85,11 +87,9 @@ int main(int argc, char** argv)
 
 	// set up addressing
 	// open socket for listening
-	// get 
-	open_socket();
-	epoll();
+
 	// store socket indo in server
-	loop;
+
 
 	return 0;
 }
