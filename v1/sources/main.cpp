@@ -22,23 +22,25 @@
 
 int loop(Server &server)
 {
-	char buffer[1024];	
-	// set up test user
+	char buffer[1024];	// should switch to cpp methods now this is showing something.
+
 	ssize_t bytes_read = 0;
-	int on_off = 0;
-	int testval = 0;
+	int on_off = 0; // tesing only 
+	int testval = 0; // testing only 
 	// continuouse accepting will mess with the fd
 	bool acknowledged = false; // just so we can get a stream of messages that come through
 
 	// This creates an epoll instance and returns its file descriptor
 	int epollfd = epoll_create1(0);
 	setup_epoll(epollfd, server.getFd(), EPOLLIN);  // epollin is for incoming messages
+	// how to test the non blocking is working?
 	make_socket_unblocking(server.getFd());
 	//setsockopt????
-	struct epoll_event events[10]; // 10 is just for testing
+	struct epoll_event events[10]; // 10 is just for testing could be MAX_CLIENTS
 	while (true)
 	{
-		int nfds = epoll_wait(epollfd, events, 10, -1);
+		// from epoll fd, in events struct 
+		int nfds = epoll_wait(epollfd, events, 10, -1); // - 1 is blocking and is not allowed?
 		for (int i = 0; i < nfds; i++)
 		{
 			if (events[i].events & EPOLLIN) {
@@ -47,6 +49,7 @@ int loop(Server &server)
                 if (fd == server.getFd()) {
                     // Handle new incoming connection
                     int client_fd = accept(server.getFd(), nullptr, nullptr);
+					// how to test the non blocking is working?
 					make_socket_unblocking(client_fd);
 					// store this fd inn user class
 					if (client_fd < 0) {
@@ -56,13 +59,17 @@ int loop(Server &server)
                         setup_epoll(epollfd, client_fd, EPOLLIN);		
 					}
                 } else {
-                    // handle incoming data on a client socket
+                    // handle incoming data on a client socket 
+					// clear buffer
 					memset(buffer, 0, sizeof(buffer));
+					// read and reister bytes
 					bytes_read = recv(fd, buffer, sizeof(buffer) - 1, MSG_DONTWAIT); // last flag makes recv non blocking 
                     if (bytes_read > 0) {
                         buffer[bytes_read] = '\0';
-                        std::cout << "Received: " << buffer << std::endl;
+						// show incoming message
+						std::cout << "Received: " << buffer << std::endl;
 						if (!acknowledged) {
+							// send message back soo server dosnt think we are dead
 							const char* ok_msg = ":server 001 OK\r\n";
 							send(fd, ok_msg, strlen(ok_msg), 0);
 							acknowledged = true; // mark as acknowledged
@@ -78,6 +85,7 @@ int loop(Server &server)
 		}
 		if (testval != on_off)
 		{
+			// just to show in and out of event handling
 			std::cout<<"on_off has changed = "<<on_off<<std::endl;
 			testval = on_off;
 		}
@@ -115,29 +123,24 @@ int main(int argc, char** argv)
 	if (argc == 3)
 	{
 		port_number = validate_port(argv[1]);
-		
-			//exit(1);
 		if (validate_password(argv[2]).empty())
-		std::cout<<"empty password"<<std::endl;
-		//			exit(1);
+		{
+			std::cout<<"empty password"<<std::endl;
+			exit(1);
+		}
 		password = argv[2];	
 	}
-	else
-	{
+	else {
 		std::cout<<"Attempting to use default port and password"<<std::endl;
 	}
 	// signals
+
 	// instantiate server object with assumed port and password
 	Server server(port_number, password);
 	// set up server socket through utility function
 	if (setupServerSocket(server) == 1)
 		std::cout<<"server socket setup failure"<<std::endl;
-	
-//	epoll(); // add server_fd
 	loop(server); //begin server loop
-
-
-    // 5. Close socket (example only)
     close(server.getFd());
 
 	return 0;

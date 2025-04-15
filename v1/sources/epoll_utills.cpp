@@ -8,6 +8,7 @@ int setup_epoll(int epoll_fd, int fd, uint32_t events)
 	struct epoll_event event;
 	event.events = events; // Monitor for read events
 	event.data.fd = fd; // File descriptor to monitor
+	// add to the epoll fd, the provided fd ie server fd, and event we are following
 	epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &event);
 	return 0;
 }
