@@ -24,7 +24,7 @@ int setupServerSocket(Server &server)
 	sockaddr_in server_address{};
     server_address.sin_family = AF_INET;
     server_address.sin_addr.s_addr = INADDR_ANY;
-    server_address.sin_port = htons(8080);
+    server_address.sin_port = htons(server.getPort());
     // 4. Bind and listen
     if (bind(server_fd, (sockaddr*)&server_address, sizeof(server_address)) < 0) {
         std::cerr << "Bind failed" << std::endl;

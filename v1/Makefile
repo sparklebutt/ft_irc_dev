@@ -1,8 +1,8 @@
 
 CPPFILES = main.cpp
-INCLUDES = ./includes
+INCLUDES = -I ./includes
 CPP = c++
-CPPFLAGS = -Werror -Wextra -Wall -Wsign-conversion -std=c++11 -MMD -MP
+CPPFLAGS = -Werror -Wextra -Wall -Wsign-conversion -std=c++11 -MMD -MP $(INCLUDES)
 BUILDDIR = buildofiles/
 OFILES = $(addprefix $(BUILDDIR), $(notdir $(CPPFILES:.cpp=.o)))
 DEPFILES = $(OFILES:.o=.d)

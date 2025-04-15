@@ -1,11 +1,13 @@
 #include <string>
+
 class Server{
 	private:
 		int _port;
 		int _server_socket;
 		int _fd;
 		std::string _password;
-		//map client_array();
+		//map client_array
+		// map/vector/array channels
 	public:
 		Server();
 		Server(int port, std::string password);
@@ -18,6 +20,7 @@ class Server{
 		// getters
 		int getPort() const;
 		std::string get_password() const;
+		// recieve message / send to message handling
 
 };
 
