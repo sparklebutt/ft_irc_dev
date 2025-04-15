@@ -3,26 +3,24 @@
 
 Server::Server() {/*default contructor*/ }
 
-Server::Server(int port , std::string password)
-{
-	// parameterized constructor 
+Server::Server(int port , std::string password) {
 	_port = port;
 	_password = password; 
-	//_fd = server_fd;
 }
 //SETTERS
 
 void Server::setFd(int fd){
 	_fd = fd;
 }
-/*void set_port(int const port);
-void set_password(std::string const password);*/
 
 // getters
 int Server::getPort() const{
 	return _port;
 }
 
+int Server::getFd() const {
+	return _fd;
+}
 std::string Server::get_password() const{
 	return _password;
 }

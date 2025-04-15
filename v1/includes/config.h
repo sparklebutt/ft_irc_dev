@@ -2,7 +2,13 @@
 
 #define MAX_CLIENTS = 10;
 #define TIMEOUT_CLIENT = 100;
+//#define FAILURE = 1;
+//#define SUCCESS = 0;
 
+namespace errVal {
+	constexpr int FAILURE = 1;
+	constexpr int SUCCESS = 0;
+}
 /*
 This is like global variables but its encapsulated in the Config, so its much harder to 
 mix variables of the same name. This is however using namespace , 2 questions: 

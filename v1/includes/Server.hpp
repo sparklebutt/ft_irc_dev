@@ -1,9 +1,10 @@
+#pragma once
 #include <string>
 
-class Server{
+class Server {
 	private:
 		int _port;
-		int _server_socket;
+		// int _server_socket;
 		int _fd;
 		std::string _password;
 		//map client_array
@@ -19,6 +20,7 @@ class Server{
 		void setFd(int fd);
 		// getters
 		int getPort() const;
+		int getFd() const;
 		std::string get_password() const;
 		// recieve message / send to message handling
 

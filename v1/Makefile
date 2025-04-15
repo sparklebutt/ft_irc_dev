@@ -1,5 +1,11 @@
 
-CPPFILES = main.cpp
+SOURCES = ./sources/
+CPPFILES =	${SOURCES}main.cpp \
+			${SOURCES}general_utilities.cpp \
+			${SOURCES}Server.cpp \
+			${SOURCES}serverUtilities.cpp \
+			${SOURCES}epoll_utills.cpp 
+			
 INCLUDES = -I ./includes
 CPP = c++
 CPPFLAGS = -Werror -Wextra -Wall -Wsign-conversion -std=c++11 -MMD -MP $(INCLUDES)
@@ -11,7 +17,7 @@ NAME = ft_irc
 # flag -Wconversion specifically prevents type conversion
 all: $(BUILDDIR) $(NAME)
 
-$(BUILDDIR)%.o: %.cpp
+$(BUILDDIR)%.o: ${SOURCES}%.cpp
 	$(CPP) $(CPPFLAGS) -g -c $< -o $@
 
 $(NAME): $(OFILES)
