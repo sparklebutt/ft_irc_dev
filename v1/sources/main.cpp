@@ -22,9 +22,15 @@
 
 int loop(Server &server)
 {
-	char buffer[1024];	// should switch to cpp methods now this is showing something.
+	// set buffer function in client?
+	//std::basic_string<char> buffer;	// should switch to cpp methods now this is showing something.
+	// using char buffer[1024] is the best choice here as string can not handle input with nullterminators
+	// trying to force the use of c++ methods here is far more prone to error , as far as i can tell
+	char buffer[1024];
 
 	ssize_t bytes_read = 0;
+
+//	int unsigned long bytes_read = 0;
 	int on_off = 0; // tesing only 
 	int testval = 0; // testing only 
 	// continuouse accepting will mess with the fd
@@ -55,13 +61,19 @@ int loop(Server &server)
 					if (client_fd < 0) {
                         perror("accept failed");
                     } else {
+						// create an instance of new user , server.map().	
                         // Add the client socket to epoll for monitoring
                         setup_epoll(epollfd, client_fd, EPOLLIN);		
 					}
                 } else {
+					// send fd to server fucntion to find relevent client 
+					
+					// read to client buffer.
+					// client handles messages
+					///... the message is validated and formated perhaps with a data struct 
+					// clearly defining what will happen next
                     // handle incoming data on a client socket 
-					// clear buffer
-					memset(buffer, 0, sizeof(buffer));
+					memset(buffer, 0, sizeof(buffer));	
 					// read and reister bytes
 					bytes_read = recv(fd, buffer, sizeof(buffer) - 1, MSG_DONTWAIT); // last flag makes recv non blocking 
                     if (bytes_read > 0) {

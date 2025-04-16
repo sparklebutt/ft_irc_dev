@@ -1,6 +1,7 @@
 
 /**
  * the main loop function in storage incase we break it whilst changing it
+ * this also has a more c approach over a cpp aproach
  */
 
  /*int loop(Server &server)
