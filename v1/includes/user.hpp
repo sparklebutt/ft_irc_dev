@@ -1,6 +1,10 @@
 #pragma once
 #include <string>
 
+// https://modern.ircdocs.horse/#client-to-server-protocol-structure
+// Names of IRC entities (clients, servers, channels) are casemapped
+
+
 class User {
 	private:
 		int _fd;

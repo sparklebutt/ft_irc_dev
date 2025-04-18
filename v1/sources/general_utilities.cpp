@@ -9,6 +9,11 @@
  * both functions must accept char * as main() does not accept std string
  * i have left them open as we could provide some extra checks. 
  */
+
+
+// https://modern.ircdocs.horse/#connection-setup
+// The standard ports for client-server connections are TCP/6667 for plaintext, and TCP/6697 for TLS connections
+
 int validate_port(char* port_char)
 {
 	std::string port(port_char);

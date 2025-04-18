@@ -1,3 +1,7 @@
+
+
+// https://modern.ircdocs.horse/#message-format
+
 class message{
 	private
 		std::string from (array)
