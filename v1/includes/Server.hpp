@@ -5,6 +5,9 @@
 
 #include "user.hpp" // can this be handled withoout including the whole hpp
 
+// connection registration
+// https://modern.ircdocs.horse/#connection-registration
+
 class Server {
 	private:
 		int _port;
