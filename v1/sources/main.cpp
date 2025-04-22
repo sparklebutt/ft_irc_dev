@@ -45,10 +45,17 @@ int loop(Server &server)
 	struct epoll_event events[10]; // 10 is just for testing could be MAX_CLIENTS
 	while (true)
 	{
+//---------- a fucntion body
 		// from epoll fd, in events struct 
 		int nfds = epoll_wait(epollfd, events, 10, -1); // - 1 is blocking and is not allowed?
+		// epoll_pwait() gives us signal handling , potentially we can add signal fds to this epoll() events
+		// we might be able to just catch them here, and avoid possible interuption issues.
+		// if nfds == -1 we have aerro we should be ab;le to print with perror.
+//-----------
+
 		for (int i = 0; i < nfds; i++)
 		{
+///------ a potential function body args= events , i, server.fd , fd, ?epollfd?
 			if (events[i].events & EPOLLIN) {
 				on_off++;
                 int fd = events[i].data.fd; // Get the associated file descriptor
@@ -65,6 +72,7 @@ int loop(Server &server)
                         // Add the client socket to epoll for monitoring
                         setup_epoll(epollfd, client_fd, EPOLLIN);		
 					}
+//--------
                 } else {
 					// send fd to server fucntion to find relevent client 
 					

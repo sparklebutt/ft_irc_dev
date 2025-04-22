@@ -36,11 +36,11 @@ int setupServerSocket(Server &server)
 		std::cerr << e.what() << '\n';
 	}
 	
-	if (bind(server.getFd(), (sockaddr*)&server_address, sizeof(server_address)) < 0) {
+	/*if (bind(server.getFd(), (sockaddr*)&server_address, sizeof(server_address)) < 0) {
         std::cerr << "Bind failed, perhaps in use?" << std::endl;
         close(server.getFd());
         return 1;
-    }
+    }*/
 
     if (listen(server.getFd(), 5) < 0) {
         std::cerr << "Listen failed" << std::endl;
