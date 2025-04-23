@@ -4,6 +4,7 @@
 #include <string.h>
 #include<iostream>
 #include <sys/socket.h>
+#include "config.h"
 
 User::User() {/*default constructor*/}
 
@@ -33,7 +34,7 @@ void User::set_acknowledged() {
  * SUCCESS the char buffer converted to std::string
  */
 std::string User::receive_message(int fd) {
-	char buffer[1024];
+	char buffer[config::BUFFER_SIZE];
 	ssize_t bytes_read = 0;
 	memset(buffer, 0, sizeof(buffer));
 

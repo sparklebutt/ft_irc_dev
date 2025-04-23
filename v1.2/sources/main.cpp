@@ -41,15 +41,15 @@ int loop(Server &server)
 	int server_max_loop = 60;
 	int is_client = 0;
 
-	int epollfd = epoll_create1(0); // This creates an epoll instance and returns its file descriptor
+	int epollfd = epoll_create1(0);
 	setup_epoll(epollfd, server.getFd(), EPOLLIN);
 	make_socket_unblocking(server.getFd());
-	struct epoll_event events[10]; // 10 is just for testing could be MAX_CLIENTS
+	struct epoll_event events[config::MAX_CLIENTS];
 	while (true)
 	{
 		server_ping_count++;
 		// from epoll fd, in events struct 
-		int nfds = epoll_wait(epollfd, events, 10, 50);
+		int nfds = epoll_wait(epollfd, events, config::MAX_CLIENTS, 50);
 		// if nfds == -1 we have perro we should be able to print with perror.
 		for (int i = 0; i < nfds; i++)
 		{
@@ -58,16 +58,16 @@ int loop(Server &server)
 				if (fd == server.getFd()) {
 					server.create_user(epollfd);
 					is_client++; // should be in server.hpp
-				} else {
-						std::string buffer;
-						buffer = server.get_user(fd)->receive_message(fd);
-						std::cout << "Received: " << buffer << std::endl; // show recived message
-						if (buffer.find("PONG"))
-						{
-							std::cout<<" PONG recived server_ping_count = "<<server_ping_count<<std::endl;;
-						}
+				}
+				else {
+					std::string buffer;
+					buffer = server.get_user(fd)->receive_message(fd);
+					std::cout << "Received: " << buffer << std::endl;
+					if (buffer.find("PONG")) {
+						std::cout<<" PONG recived server_ping_count = "<<server_ping_count<<std::endl;;
 					}
-                }
+				}
+            }
 		}
 		// this will be its own function !!!
 		//std::cout<<"-----server_ping_count ----"<< server_ping_count<<std::endl;
@@ -132,7 +132,7 @@ int main(int argc, char** argv)
 	// instantiate server object with assumed port and password
 	Server server(port_number, password);
 	// set up server socket through utility function
-	if (setupServerSocket(server) == 1)
+	if (setupServerSocket(server) == errVal::FAILURE)
 		std::cout<<"server socket setup failure"<<std::endl;
 	loop(server); //begin server loop
 	// clean up

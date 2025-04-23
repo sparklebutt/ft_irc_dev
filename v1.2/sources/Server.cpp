@@ -1,6 +1,5 @@
 
 #include "Server.hpp"
-//#incude ""
 #include <sys/types.h>
 #include <unistd.h>
 #include <string.h> //strlen
@@ -11,6 +10,7 @@
 #include "User.hpp"
 #include <map>
 #include <memory> // shared pointers
+
 Server::Server() {/*default contructor*/ }
 
 Server::Server(int port , std::string password) {
@@ -50,10 +50,6 @@ void Server::create_user(int epollfd) {
 		}
 	}
 }
-
-/*void Server::add_user(int client_fd, User user) {
-	_users[client_fd] = std::make_shared<user>(client_fd);
-}*/
 
 void Server::setFd(int fd) {
 	_fd = fd;
