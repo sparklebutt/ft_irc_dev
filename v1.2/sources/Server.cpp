@@ -16,9 +16,6 @@ Server::Server() {/*default contructor*/ }
 Server::Server(int port , std::string password) {
 	_port = port;
 	_password = password;
-	//_users
-	//empty array/map of user objects
-	//empty array/map of channel objects
 }
 //SETTERS
 
@@ -29,7 +26,7 @@ int Server::getFd() const {
 /**
  * @brief Here a client is accepted , error checked , socket is adusted for non-blocking
  * the client fd is added to the epoll and then added to the user map. a welcome message
- * is sent as a acknowlegement message back to irssi.
+ * is sent as an acknowlegement message back to irssi.
  */
 void Server::create_user(int epollfd) {
  	// Handle new incoming connection
@@ -38,8 +35,6 @@ void Server::create_user(int epollfd) {
 		perror("accept failed");
 		// return ?
  	} else {
-		// Add the client socket to epoll for monitoring
-	 	// how to test the non blocking is working?
  		make_socket_unblocking(client_fd);
 		setup_epoll(epollfd, client_fd, EPOLLIN);
 		// create an instance of new user and add to server map
