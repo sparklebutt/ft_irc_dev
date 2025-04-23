@@ -12,13 +12,16 @@ Server::Server(int port , std::string password) {
 }
 //SETTERS
 
-void Server::add_user(int fd) {
+int Server::getFd() const {
+	return _fd;
+}
+/*void Server::create_user(int fd) {
 	//std::string name = user + itoa(fd);
 	//User name(fd);
 	// add name to map (fd name);
-}
+}*/
 
-void Server::setFd(int fd){
+void Server::setFd(int fd) {
 	_fd = fd;
 }
 
@@ -27,9 +30,7 @@ int Server::getPort() const{
 	return _port;
 }
 
-int Server::getFd() const {
-	return _fd;
-}
+
 std::string Server::get_password() const{
 	return _password;
 }
