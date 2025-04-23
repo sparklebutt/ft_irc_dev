@@ -5,6 +5,7 @@
 #include<iostream>
 #include <sys/socket.h>
 #include "config.h"
+#include <Server_error.hpp>
 
 User::User() {/*default constructor*/}
 
@@ -52,9 +53,10 @@ std::string User::receive_message(int fd) {
 		return ""; // this should mayb change to a throw.
 	}
 	else if (bytes_read == 0) {
-		std::cout << "client disconnected closing socket" <<std::endl;
-		close(fd);
-		return ""; // this should be handled with a disconnected function + cleanup.
+		//std::cout << "client disconnected closing socket" <<std::endl;
+		throw ServerException(ErrorType::CLIENT_DISCONNECTED);
+		//close(fd);
+		//return ""; // this should be handled with a disconnected function + cleanup.
 	}
 	return std::string(buffer);
 }

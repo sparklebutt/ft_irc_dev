@@ -6,6 +6,7 @@
 #include "Server.hpp"
 #include "serverUtilities.hpp"
 
+#include "Server_error.hpp"
 #include "config.h"
 
 int setupServerSocket(Server &server)
@@ -33,7 +34,8 @@ int setupServerSocket(Server &server)
     // 4. Bind and listen	
 	if (bind(server.getFd(), (sockaddr*)&server_address, sizeof(server_address)) == errVal::FAILURE) {
         std::cerr << "Bind failed, perhaps in use?" << std::endl;
-        close(server.getFd());
+		//throw ServerException(ErrorType::CLIENT_DISCONNECTED); 
+		close(server.getFd());
         return errVal::FAILURE;
     }
 

@@ -17,11 +17,18 @@ Server::Server(int port , std::string password) {
 	_port = port;
 	_password = password;
 }
-//SETTERS
-
-int Server::getFd() const {
-	return _fd;
+// SETTERS
+void Server::setFd(int fd) { _fd = fd; }
+// note we may want to check here for values below 0
+void Server::set_client_count(int val) { 
+	_client_count += val;
 }
+
+// GETTERS
+int Server::getFd() const { return _fd; }
+int Server::get_client_count() const { return _client_count; }
+int Server::getPort() const{ return _port; }
+
 
 /**
  * @brief Here a client is accepted , error checked , socket is adusted for non-blocking
@@ -51,15 +58,12 @@ void Server::create_user(int epollfd) {
 	}
 }
 
-void Server::setFd(int fd) {
-	_fd = fd;
+void Server::remove_user(int epollfd, int client_fd) {
+	close(client_fd);
+	epoll_ctl(epollfd, EPOLL_CTL_DEL, client_fd, 0);
+	_users.erase(client_fd);
+	_client_count--;
 }
-
-// getters
-int Server::getPort() const{
-	return _port;
-}
-
 
 
 /**

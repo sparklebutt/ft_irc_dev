@@ -11,8 +11,10 @@
 #include <unistd.h> // close()
 #include <string.h>
 
+#include "Server_error.hpp"
 #include "epoll_utils.hpp"
 #include <sys/epoll.h>
+//#include <signal.h>
 // irssi commands 
 // / WINDOW LOG ON 
 // this can be opend in new terminal tail -f ~/ircTAB
@@ -39,7 +41,6 @@ int loop(Server &server)
 	// applying a ping pong test 
 	int server_ping_count = 0;
 	int server_max_loop = 60;
-	int is_client = 0;
 
 	int epollfd = epoll_create1(0);
 	setup_epoll(epollfd, server.getFd(), EPOLLIN);
@@ -49,7 +50,8 @@ int loop(Server &server)
 	{
 		server_ping_count++;
 		// from epoll fd, in events struct 
-		int nfds = epoll_wait(epollfd, events, config::MAX_CLIENTS, 50);
+		//int nfds = epoll_wait(epollfd, events, config::MAX_CLIENTS, 50);
+		int nfds = epoll_pwait(epollfd, events, config::MAX_CLIENTS, 50, &sigmask);
 		// if nfds == -1 we have perro we should be able to print with perror.
 		for (int i = 0; i < nfds; i++)
 		{
@@ -57,11 +59,26 @@ int loop(Server &server)
                 int fd = events[i].data.fd; // Get the associated file descriptor
 				if (fd == server.getFd()) {
 					server.create_user(epollfd);
-					is_client++; // should be in server.hpp
+					server.set_client_count(1);
+					std::cout<<server.get_client_count()<<'\n';
 				}
 				else {
 					std::string buffer;
-					buffer = server.get_user(fd)->receive_message(fd);
+					try
+					{
+						buffer = server.get_user(fd)->receive_message(fd);
+					}
+					catch(const ServerException& e)
+					{
+						if (e.getType() == ErrorType::CLIENT_DISCONNECTED)
+						{
+							server.remove_user(epollfd, fd);
+							std::cout<<server.get_client_count()<<'\n';
+						}
+
+					}
+					
+
 					std::cout << "Received: " << buffer << std::endl;
 					if (buffer.find("PONG")) {
 						std::cout<<" PONG recived server_ping_count = "<<server_ping_count<<std::endl;;
@@ -71,7 +88,7 @@ int loop(Server &server)
 		}
 		// this will be its own function !!!
 		//std::cout<<"-----server_ping_count ----"<< server_ping_count<<std::endl;
-		if (server_ping_count >= server_max_loop && is_client > 0) { 
+		if (server_ping_count >= server_max_loop && server.get_client_count() > 0) { 
 			std::map<int, std::shared_ptr<User>> users = server.get_map();
 			for (std::map<int, std::shared_ptr<User>>::iterator it = users.begin(); it != users.end(); it++)
 			{
@@ -79,10 +96,7 @@ int loop(Server &server)
 				send(it->first, "PING :server/r/n", 14, 0);
 				server_ping_count = 0;	
 			}
-
 		}
-
-
 	}
 	return 0;
 }
