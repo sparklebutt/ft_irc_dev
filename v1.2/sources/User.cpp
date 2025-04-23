@@ -13,6 +13,14 @@ User::~User() {/*default deconstructor*/}
 
 int User::getFd() { return _fd; }
 
+bool User::get_acknowledged() {
+	return _acknowledged;
+}
+
+void User::set_acknowledged() {
+	_acknowledged = true;
+}
+
 std::string User::receive_message(int fd) {
 	char buffer[1024]; //buffer to read incoming message
 	ssize_t bytes_read = 0; // bytes to read from socket  
@@ -22,16 +30,19 @@ std::string User::receive_message(int fd) {
 	if (bytes_read > 0) {
         buffer[bytes_read] = '\0';
 	}
-	else if (bytes_read < 0)
-	{
+	else if (bytes_read < 0) {
+		if (errno == EAGAIN || errno == EWOULDBLOCK) {
+//			std::cout<<"no data to  handle in message receive, skipping"<<std::endl;
+			return "";
+		}
 		perror("recv gailed");
+		// throw error
 		return ""; // this should mayb change to a throw.
 	}
-	else if (bytes_read == 0)
-	{
+	else if (bytes_read == 0) {
 		std::cout << "client disconnected closing socket" <<std::endl;
 		close(fd);
-		return "";
+		return ""; // this should be handled with a disconnected function + cleanup.
 	}
-	return static_cast<std::string>(buffer);
+	return std::string(buffer);
 }

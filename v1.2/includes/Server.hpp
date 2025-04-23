@@ -26,7 +26,7 @@ class User;
 class Server {
 	private:
 		int _port;
-		// int _server_socket;
+		// client count
 		int _fd;
 		std::string _password;
 		// num of clients 
@@ -44,7 +44,7 @@ class Server {
 		//void set_port(int const port);
 		//void set_password(std::string const password);
 		void create_user(int epollfd);
-		void add_user(int client_fd, User user);
+		//void add_user(int client_fd, User user);
 		// add channel
 		// remove client
 		// remove channel
@@ -57,7 +57,10 @@ class Server {
 		// 
 		int getPort() const;
 		int getFd() const;
+		// returns a user shared_pointer from the map
 		std::shared_ptr<User> get_user(int fd);
+		// returns the whole map 
+		std::map<int, std::shared_ptr<User>> get_map();
 		// read to private buffer returns string to parse. 
 		// message handling 
 		std::string get_password() const;

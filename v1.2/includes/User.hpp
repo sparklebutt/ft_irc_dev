@@ -15,10 +15,15 @@ class User {
 		std::string _Fullname;
 		// pointer to current channel object ?
 		// list of channels user is in 
+
+		bool _acknowledged = false;
 	public:
 		User();
 		User(int fd);
 		~User();
 		std::string receive_message(int fd);
 		int getFd();
+
+		bool get_acknowledged();
+		void set_acknowledged();
 };

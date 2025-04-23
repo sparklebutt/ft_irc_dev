@@ -3,7 +3,7 @@
 //#incude ""
 #include <sys/types.h>
 #include <unistd.h>
-
+#include <string.h> //strlen
 #include <iostream> // testing with cout
 #include <sys/socket.h>
 #include <sys/epoll.h>
@@ -26,6 +26,11 @@ int Server::getFd() const {
 	return _fd;
 }
 
+/**
+ * @brief Here a client is accepted , error checked , socket is adusted for non-blocking
+ * the client fd is added to the epoll and then added to the user map. a welcome message
+ * is sent as a acknowlegement message back to irssi.
+ */
 void Server::create_user(int epollfd) {
  	// Handle new incoming connection
 	int client_fd = accept(getFd(), nullptr, nullptr);
@@ -40,7 +45,14 @@ void Server::create_user(int epollfd) {
 		// create an instance of new user and add to server map
 		_users[client_fd] = std::make_shared<User>(client_fd);
 		std::cout<<"New user created , fd value is  == "<<_users[client_fd]->getFd()<<std::endl;
-
+// WELCOME MESSAGE 
+		if (!_users[client_fd]->get_acknowledged()) {
+			// send message back so server dosnt think we are dead
+			// this might typically be a welcome message 
+			const char* ok_msg = ":server 001 OK\r\n";
+			send(client_fd, ok_msg, strlen(ok_msg), 0);
+			_users[client_fd]->set_acknowledged();
+		}
 	}
 }
 
@@ -57,6 +69,8 @@ int Server::getPort() const{
 	return _port;
 }
 
+
+
 /**
  * @brief to find the user object in the users array
  *  and return a pointer to it 
@@ -72,6 +86,10 @@ std::shared_ptr<User> Server::get_user(int fd) {
 	}
 	else
 		return nullptr;
+}
+
+std::map<int, std::shared_ptr<User>> Server::get_map() {
+	return _users;
 }
 
 std::string Server::get_password() const{
