@@ -57,6 +57,22 @@ int Server::getPort() const{
 	return _port;
 }
 
+/**
+ * @brief to find the user object in the users array
+ *  and return a pointer to it 
+ * 
+ * @param fd the active fd 
+ * @return User* 
+ */
+std::shared_ptr<User> Server::get_user(int fd) {
+	auto it = _users.find(fd);
+	if (it != _users.end())
+	{
+		return it->second;
+	}
+	else
+		return nullptr;
+}
 
 std::string Server::get_password() const{
 	return _password;

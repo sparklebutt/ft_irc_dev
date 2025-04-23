@@ -5,7 +5,7 @@
 
 #include "Server.hpp"
 #include "serverUtilities.hpp"
-
+#include "User.hpp"
 #include "general_utilities.hpp"
 #include "config.h"
 #include <unistd.h> // close()
@@ -20,19 +20,24 @@
 // /raw open `/file of choice
 // open fileofchoice
 
+/**
+ * @brief This loop functions job is to keep the server running and accepting connections.
+ * It will also help manage incoming messages from clients that will be redirected to a message
+ * handling class/function. 
+ * 
+ * @param server the instantiated server object that will be used to manage the server and its data
+ * @return int 
+ */
 int loop(Server &server)
 {
 	// set buffer function in client?
 	//std::basic_string<char> buffer;	// should switch to cpp methods now this is showing something.
 	// using char buffer[1024] is the best choice here as string can not handle input with nullterminators
 	// trying to force the use of c++ methods here is far more prone to error , as far as i can tell
-	char buffer[1024];
+	// char buffer[1024];
 
-	ssize_t bytes_read = 0;
+	// ssize_t bytes_read = 0;
 
-//	int unsigned long bytes_read = 0;
-	int on_off = 0; // tesing only 
-	int testval = 0; // testing only 
 	// continuouse accepting will mess with the fd
 	bool acknowledged = false; // just so we can get a stream of messages that come through
 
@@ -56,7 +61,6 @@ int loop(Server &server)
 		for (int i = 0; i < nfds; i++)
 		{
 			if (events[i].events & EPOLLIN) {
-				on_off++;
                 int fd = events[i].data.fd; // Get the associated file descriptor
                 if (fd == server.getFd()) {
 					server.create_user(epollfd);
@@ -75,12 +79,18 @@ int loop(Server &server)
 					///... the message is validated and formated perhaps with a data struct 
 					// clearly defining what will happen next
                     // handle incoming data on a client socket 
-					memset(buffer, 0, sizeof(buffer));	
+					
+					/*memset(buffer, 0, sizeof(buffer));	
 					// read and reister bytes
 					bytes_read = recv(fd, buffer, sizeof(buffer) - 1, MSG_DONTWAIT); // last flag makes recv non blocking 
                     if (bytes_read > 0) {
                         buffer[bytes_read] = '\0';
-						// show incoming message
+						// show incoming message*/
+						std::string buffer;
+						
+//						buffer = get_user(fd).recieve_message(fd);
+						buffer = server.get_user(fd)->receive_message(fd);
+
 						std::cout << "Received: " << buffer << std::endl;
 						if (!acknowledged) {
 							// send message back soo server dosnt think we are dead
@@ -88,21 +98,13 @@ int loop(Server &server)
 							send(fd, ok_msg, strlen(ok_msg), 0);
 							acknowledged = true; // mark as acknowledged
 						}
-					} else if (bytes_read == 0) {
+					} /*else if (bytes_read == 0) {
                         std::cout << "Client disconnected. Closing socket." << std::endl;
                         close(fd); // remove the client socket
                     } else {
                         perror("read failed");
-                    }
+                    }*/
                 }
-			}
-			
-		}
-		if (testval != on_off)
-		{
-			// just to show in and out of event handling
-			std::cout<<"on_off has changed = "<<on_off<<std::endl;
-			testval = on_off;
 		}
 	}
 	return 0;

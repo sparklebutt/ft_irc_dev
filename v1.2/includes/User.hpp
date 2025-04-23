@@ -19,6 +19,6 @@ class User {
 		User();
 		User(int fd);
 		~User();
-		//std::string recieve_message(int fd);
+		std::string receive_message(int fd);
 		int getFd();
 };

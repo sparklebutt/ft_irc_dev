@@ -57,6 +57,7 @@ class Server {
 		// 
 		int getPort() const;
 		int getFd() const;
+		std::shared_ptr<User> get_user(int fd);
 		// read to private buffer returns string to parse. 
 		// message handling 
 		std::string get_password() const;
