@@ -28,7 +28,7 @@ class Server {
 		// setters
 		//void set_port(int const port);
 		//void set_password(std::string const password);
-		void add_user(int fd);
+		void create_user(int fd);
 		// add channel
 		// remove client
 		// remove channel
