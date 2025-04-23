@@ -42,14 +42,14 @@ int loop(Server &server)
 	int is_client = 0;
 
 	int epollfd = epoll_create1(0); // This creates an epoll instance and returns its file descriptor
-	setup_epoll(epollfd, server.getFd(), EPOLLIN);  // epollin is for incoming messages
+	setup_epoll(epollfd, server.getFd(), EPOLLIN);
 	make_socket_unblocking(server.getFd());
 	struct epoll_event events[10]; // 10 is just for testing could be MAX_CLIENTS
 	while (true)
 	{
 		server_ping_count++;
 		// from epoll fd, in events struct 
-		int nfds = epoll_wait(epollfd, events, 10, 50); // - 1 is blocking, 0 no wait wait, 50ms will wait 50ms before polling again.
+		int nfds = epoll_wait(epollfd, events, 10, 50);
 		// if nfds == -1 we have perro we should be able to print with perror.
 		for (int i = 0; i < nfds; i++)
 		{
@@ -137,7 +137,5 @@ int main(int argc, char** argv)
 	loop(server); //begin server loop
 	// clean up
     close(server.getFd());
-
 	return 0;
 }
-

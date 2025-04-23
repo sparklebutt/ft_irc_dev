@@ -21,10 +21,21 @@ void User::set_acknowledged() {
 	_acknowledged = true;
 }
 
+/**
+ * @brief Reads using recv() to a char buffer as data recieved from the socket
+ * comes in as raw bytes, std::string does not handle this kind of raw data very well,
+ * string can also cause un predictable behaviour due to null terminator.
+ * 
+ * if bytes read is 0 client is is suspected to be disconnected and related cleanup
+ * should follow
+ * 
+ * @return FAIL an empty string or throw 
+ * SUCCESS the char buffer converted to std::string
+ */
 std::string User::receive_message(int fd) {
-	char buffer[1024]; //buffer to read incoming message
-	ssize_t bytes_read = 0; // bytes to read from socket  
-	memset(buffer, 0, sizeof(buffer));	// set all values to 0
+	char buffer[1024];
+	ssize_t bytes_read = 0;
+	memset(buffer, 0, sizeof(buffer));
 
 	bytes_read = recv(fd, buffer, sizeof(buffer) - 1, MSG_DONTWAIT); // last flag makes recv non blocking 
 	if (bytes_read > 0) {
