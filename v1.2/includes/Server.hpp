@@ -2,7 +2,7 @@
 #include <string>
 #include <map>
 #include <memory>
-
+#include "Server_error.hpp"
 //#include "user.hpp" // can this be handled withoout including the whole hpp
 
 // connection registration
@@ -28,7 +28,8 @@ class Server {
 		int _port;
 		int _client_count = 0;
 		int _fd;
-		int _signal_fd;
+		int _current_client_in_progress;
+		//int _signal_fd;
 		int _epoll_fd;
 		std::string _password;
 		std::map<int, std::shared_ptr<User>> _users; //unordered map?
@@ -52,6 +53,7 @@ class Server {
 		void set_signal_fd(int fd);
 		void set_client_count(int val);
 		void set_event_pollfd(int epollfd);
+		void set_current_client_in_progress(int fd);
 		// get channel
 
 		// GETTERS
@@ -60,12 +62,14 @@ class Server {
 		int get_signal_fd() const;
 		int get_client_count() const;
 		int get_event_pollfd() const;
+		int get_current_client_in_progress() const;
 		std::string get_password() const;
 		// returns a user shared_pointer from the map
 		std::shared_ptr<User> get_user(int fd);
 		// returns the whole map 
 		std::map<int, std::shared_ptr<User>> get_map();
-		// message handling 
+		// message handling
+		void handle_client_connection_error(ErrorType err_type);
 		void shutdown();
 
 };

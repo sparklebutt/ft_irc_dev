@@ -37,13 +37,13 @@ namespace IRCerr {
 }
 
 namespace IRCMessage {
-	std::string error_msg = "ERROR :Server cannot accept connection, closing.\r\n";
-	std::string welcome_msg = ":server 001 OK\r\n";
-	std::string ping_msg = "PING :server\r\n";
-	std::string pong_msg = "PONG :server\r\n";
-	std::string pass_msg = "PASS :password\r\n";
-	std::string nick_msg = "NICK :nickname\r\n";
-	std::string user_msg = "USER :username 0 * :realname\r\n";
+	inline constexpr const char*  error_msg = "ERROR :Server cannot accept connection, closing.\r\n";
+	inline constexpr const char*  welcome_msg = ":server 001 OK\r\n";
+	inline constexpr const char* ping_msg = "PING :server\r\n";
+	inline constexpr const char* pong_msg = "PONG :server\r\n";
+	inline constexpr const char* pass_msg = "PASS :password\r\n";
+	inline constexpr const char* nick_msg = "NICK :nickname\r\n";
+	inline constexpr const char* user_msg = "USER :username 0 * :realname\r\n";
 }
 /*
 This is like global variables but its encapsulated in the Config, so its much harder to 

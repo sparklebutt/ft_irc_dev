@@ -61,27 +61,14 @@ int loop(Server &server)
 				if (fd == server.getFd()) {
 					try
 					{
-					
 						server.create_user(epollfd);
-						server.set_client_count(1);
+						//server.set_client_count(1);
 						std::cout<<server.get_client_count()<<'\n';
-							
 					}
 					catch(const ServerException& e)
 					{
-						if (e.getType() == ErrorType::EPOLL_FAILURE_1)
-						{
-							// client couldnt be added to epoll
-							// send error to irssi close client fd
-							std::cerr << e.what() << '\n';
-						}
-						if (e.getType() == ErrorType::SOCKET_FAILURE)
-						{
-							// send error to irssi close client fd		
-							// client socket couldnt be made non blocking
-							std::cerr << e.what() << '\n';
-						}
-
+						server.handle_client_connection_error(e.getType());
+						continue ;
 					}
 				}
 				else {
