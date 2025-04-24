@@ -17,10 +17,14 @@ private:
 public:
     IrcMessage();
     ~IrcMessage();
+    // parse incoming
     bool parse(const std::string& rawMessage);
+    // parse outgoing
+    std::string toRawString() const;
     void setPrefix(const std::string& prefix);
     void setCommand(const std::string& command); 
     const std::string& getPrefix() const;
     const std::string& getCommand() const;
     const std::vector<std::string>& getParams() const;
+
 };

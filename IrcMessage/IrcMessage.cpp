@@ -128,3 +128,39 @@ bool IrcMessage::parse(const std::string& rawMessage)
     // If we reached here, parsing was successful
     return true;
 }
+
+std::string IrcMessage::toRawString() const{
+
+    // create the output stream
+    std::stringstream ss;
+
+    // add prefix
+    if(!_prefix.empty()){
+        ss << ":" << _prefix << " ";
+    }
+
+    // add command
+    ss << _command
+
+    // add parameters
+    for (size_t i = 0; i < _paramsList.size(); ++i){
+        // add space seperator
+        ss << " ";
+        bool is_last_param = (i == _paramsList.size() - 1);
+        bool needs_trailing_prefix = false;
+
+        if (is_last_param){
+            // check if last param contains a space
+            if(_paramsList[i].find(' ') != std::string::npos || _paramList[i].empty()){
+                needs_trailing_prefix = true;
+            }
+        }
+        if (needs_trailing_prefix){
+            ss << ":";
+        }
+        ss << _paramsList[i];
+    }
+    ss << "\r\n";
+
+    return ss.str(); // return the built string
+}
