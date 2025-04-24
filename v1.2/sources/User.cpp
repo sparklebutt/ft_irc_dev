@@ -54,7 +54,7 @@ std::string User::receive_message(int fd) {
 	}
 	else if (bytes_read == 0) {
 		//std::cout << "client disconnected closing socket" <<std::endl;
-		throw ServerException(ErrorType::CLIENT_DISCONNECTED);
+		throw ServerException(ErrorType::CLIENT_DISCONNECTED, "");
 		//close(fd);
 		//return ""; // this should be handled with a disconnected function + cleanup.
 	}

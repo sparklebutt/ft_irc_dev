@@ -3,24 +3,37 @@
 
 enum class ErrorType {
 	CLIENT_DISCONNECTED,
-	SERVER_SHUTDOWN
+	SERVER_SHUTDOWN,
+	EPOLL_FAILURE_0,
+	EPOLL_FAILURE_1,
+	SOCKET_FAILURE
 };
 
 class ServerException : public std::exception {
 	private:
-		ErrorType type;
+		ErrorType _type;
+		std::string _message; 
 	public:
-		ServerException(ErrorType t) : type(t) {}
+		ServerException(ErrorType t, const std::string& msg) : _type(t), _message(msg) {}
 
-    	ErrorType getType() const { return type; }
+    	ErrorType getType() const { return _type; }
 
     	const char* what() const noexcept override {
-        	switch (type) {
-            	case ErrorType::CLIENT_DISCONNECTED: return "Client Disconnected";
-            	case ErrorType::SERVER_SHUTDOWN: return "server shutdown destroying evrything hold .....";
-				//case ErrorType::NETWORK_FAILURE: return "Network Failure";
-            	//case ErrorType::INVALID_MESSAGE: return "Invalid Message";
-            	default: return "Unknown Error";
-			}
+			static std::string error_msg; // statics are more persistent
+			error_msg = get_error_msg() +(_message.empty() ? "" : ": " + _message);
+			return error_msg.c_str();
 		}
+	private:
+		std::string get_error_msg() const {
+		switch (_type) {
+           	case ErrorType::CLIENT_DISCONNECTED: return "Client Disconnected";
+        	case ErrorType::SERVER_SHUTDOWN: return "server shutdown destroying evrything hold .....";
+			case ErrorType::EPOLL_FAILURE_0: return "Epoll failed to complete"; //clean
+			case ErrorType::EPOLL_FAILURE_1: return "Epoll failed to complete"; // dirty 
+			case ErrorType::SOCKET_FAILURE: return "socket failed to complete";
+			//case ErrorType::NETWORK_FAILURE: return "Network Failure";
+           	//case ErrorType::INVALID_MESSAGE: return "Invalid Message";
+           	default: return "Unknown Error";
+		}
+	}
 };

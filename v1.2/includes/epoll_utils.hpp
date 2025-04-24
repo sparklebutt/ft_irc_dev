@@ -1,6 +1,8 @@
 #pragma once
 #include <stdint.h>
 
+class Server;
+
 /**
  * @brief Creates a struct for epoll events such as EPOLLIN
  * for monitoring and adds the created struct to a kernel-managed data structure,
@@ -27,3 +29,5 @@ int setup_epoll(int epoll_fd, int fd, uint32_t events);
  * 
  */
 int make_socket_unblocking(int fd);
+
+int create_epollfd(Server &server);

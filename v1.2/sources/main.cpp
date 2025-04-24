@@ -8,12 +8,14 @@
 #include "User.hpp"
 #include "general_utilities.hpp"
 #include "config.h"
-#include <unistd.h> // close()
-#include <string.h>
+//#include <unistd.h> // close()
+//#include <string.h>
 
 #include "Server_error.hpp"
 #include "epoll_utils.hpp"
 #include <sys/epoll.h>
+#include "signal_handler.h"
+#include <sys/signalfd.h>
 //#include <signal.h>
 // irssi commands 
 // / WINDOW LOG ON 
@@ -41,26 +43,46 @@ int loop(Server &server)
 	// applying a ping pong test 
 	int server_ping_count = 0;
 	int server_max_loop = 60;
-
-	int epollfd = epoll_create1(0);
-	setup_epoll(epollfd, server.getFd(), EPOLLIN);
-	make_socket_unblocking(server.getFd());
+	int epollfd = 0;
+	epollfd = create_epollfd(server);	
 	struct epoll_event events[config::MAX_CLIENTS];
 	while (true)
 	{
 		server_ping_count++;
-		// from epoll fd, in events struct 
-		//int nfds = epoll_wait(epollfd, events, config::MAX_CLIENTS, 50);
-		int nfds = epoll_pwait(epollfd, events, config::MAX_CLIENTS, 50, &sigmask);
+		// from epoll fd, in events struct this has niche error handling 
+		int nfds = epoll_wait(epollfd, events, config::MAX_CLIENTS, 50);
+		if (nfds != 0)
+			std::cout << "epoll_pwait returned: " << nfds << " events\n";
 		// if nfds == -1 we have perro we should be able to print with perror.
 		for (int i = 0; i < nfds; i++)
-		{
+		{	
 			if (events[i].events & EPOLLIN) {
                 int fd = events[i].data.fd; // Get the associated file descriptor
 				if (fd == server.getFd()) {
-					server.create_user(epollfd);
-					server.set_client_count(1);
-					std::cout<<server.get_client_count()<<'\n';
+					try
+					{
+					
+						server.create_user(epollfd);
+						server.set_client_count(1);
+						std::cout<<server.get_client_count()<<'\n';
+							
+					}
+					catch(const ServerException& e)
+					{
+						if (e.getType() == ErrorType::EPOLL_FAILURE_1)
+						{
+							// client couldnt be added to epoll
+							// send error to irssi close client fd
+							std::cerr << e.what() << '\n';
+						}
+						if (e.getType() == ErrorType::SOCKET_FAILURE)
+						{
+							// send error to irssi close client fd		
+							// client socket couldnt be made non blocking
+							std::cerr << e.what() << '\n';
+						}
+
+					}
 				}
 				else {
 					std::string buffer;
@@ -116,6 +138,9 @@ int loop(Server &server)
  */
 int main(int argc, char** argv)
 {
+	//Server localServer;
+	
+
 	int port_number = 6666;
 	std::string password = "password";
 	//if (argc != 3)
@@ -141,14 +166,61 @@ int main(int argc, char** argv)
 	else {
 		std::cout<<"Attempting to use default port and password"<<std::endl;
 	}
-	// signals
-
 	// instantiate server object with assumed port and password
 	Server server(port_number, password);
+	// set up global pointer to server for clean up
+	Global::server = &server;
+
+	// server.set_signal_fd(signal_mask());
 	// set up server socket through utility function
 	if (setupServerSocket(server) == errVal::FAILURE)
 		std::cout<<"server socket setup failure"<<std::endl;
-	loop(server); //begin server loop
+	try
+	{
+		loop(server); //begin server loop		
+	}
+
+	catch(const ServerException& e)
+	{
+		switch (e.getType())
+		{
+			/*case ErrorType::CLIENT_DISCONNECTED:
+			{
+				// server.remove_user(epollfd, fd);				
+				std::cerr << e.what() << '\n';
+				break;
+
+			}*/
+			/*case ErrorType::SERVER_SHUTDOWN:
+			{
+
+				std::cerr << e.what() << '\n';
+				break;
+
+			}*/
+			case ErrorType::EPOLL_FAILURE_0:
+			// set a flag so we dont close server socket as it  is not open
+				std::cerr << e.what() << '\n';
+				break;
+			case ErrorType::EPOLL_FAILURE_1:
+			{
+				close (server.get_event_pollfd());
+				std::cerr << e.what() << '\n';
+				break;
+
+			}
+			case ErrorType::SOCKET_FAILURE:
+			{
+				close (server.get_event_pollfd());
+				close(server.getFd());
+				std::cerr << e.what() << '\n';
+				break;
+
+			}
+			default:
+				std::cerr << "Unknown error occurred" << '\n';
+		}
+	}
 	// clean up
     close(server.getFd());
 	return 0;
