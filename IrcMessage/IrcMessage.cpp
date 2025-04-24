@@ -3,19 +3,15 @@
 #include <sstream>  // For string stream operations
 #include <cstddef>  // For size_t
 
-// --- Constructor ---
 IrcMessage::IrcMessage()
 {
-    // Default constructor, _prefix, _command, _paramsList are default constructed (empty)
 }
 
-// --- Destructor ---
 IrcMessage::~IrcMessage()
 {
-    // Nothing dynamic allocated in this simple version, default destructor is fine
+
 }
 
-// --- Setters ---
 void IrcMessage::setPrefix(const std::string& prefix)
 {
     _prefix = prefix;
@@ -26,9 +22,6 @@ void IrcMessage::setCommand(const std::string& command)
     _command = command;
 }
 
-// Note: setParams is removed as params are handled by parse into the vector
-
-// --- Getters ---
 const std::string& IrcMessage::getPrefix() const
 {
     return _prefix;
@@ -45,21 +38,20 @@ const std::vector<std::string>& IrcMessage::getParams() const
 }
 
 // Optional: Implement helper getters for parameters
-/*
-const std::string& IrcMessage::getParam(size_t index) const
-{
-    if (index < _paramsList.size()) {
-        return _paramsList[index];
-    }
-    // Handle out of bounds access - throwing an exception is common
-    throw std::out_of_range("Parameter index out of bounds");
-}
+// const std::string& IrcMessage::getParam(size_t index) const
+// {
+//     if (index < _paramsList.size()) {
+//         return _paramsList[index];
+//     }
+//     // Handle out of bounds access - throwing an exception is common
+//     throw std::out_of_range("Parameter index out of bounds");
+// }
 
-size_t IrcMessage::getParamCount() const
-{
-    return _paramsList.size();
-}
-*/
+// size_t IrcMessage::getParamCount() const
+// {
+//     return _paramsList.size();
+// }
+
 
 // --- Parse Method (Core Logic) ---
 bool IrcMessage::parse(const std::string& rawMessage)
