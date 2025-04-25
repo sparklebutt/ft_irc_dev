@@ -1,6 +1,7 @@
 #pragma once
-
-
+#include <string>
+#include <sstream>
+#include <iostream>
 /**
  * @brief 
  * this is a header file that contains global variables and constants
@@ -64,7 +65,12 @@ namespace IRCMessage {
 	inline constexpr const char* ping_msg = "PING :server\r\n";
 	inline constexpr const char* pong_msg = "PONG :server\r\n";
 	inline constexpr const char* pass_msg = "PASS :password\r\n";
-	inline constexpr const char* nick_msg = "NICK :nickname\r\n";
+	inline std::string get_nick_msg(const std::string& nickname) {
+		std::stringstream ss;
+        ss << "@ft_irc new nickname is now :" << nickname << "\r\n";
+        return ss.str(); }
+	//inline constexpr const char* nick_msg = ":*!user@ft_irc NICK :helooo\r\n";	
+	inline constexpr const char* nick_msg = "@ft_irc new nickname name is now :nickname\r\n";
 	inline constexpr const char* user_msg = "USER :username 0 * :realname\r\n";
 }
 

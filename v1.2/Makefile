@@ -6,11 +6,12 @@ CPPFILES =	${SOURCES}main.cpp \
 			${SOURCES}serverUtilities.cpp \
 			${SOURCES}epoll_utills.cpp \
 			${SOURCES}User.cpp \
-			${SOURCES}signal_handler.cpp
+			${SOURCES}signal_handler.cpp \
+			${SOURCES}IrcMessage.cpp
 			
 INCLUDES = -I ./includes
 CPP = c++
-CPPFLAGS = -Werror -Wextra -Wall -Wsign-conversion -std=c++17 -MMD -MP $(INCLUDES)
+CPPFLAGS = -Werror -Wextra -Wall -Wsign-conversion -std=c++20 -MMD -MP $(INCLUDES)
 BUILDDIR = buildofiles/
 OFILES = $(addprefix $(BUILDDIR), $(notdir $(CPPFILES:.cpp=.o)))
 DEPFILES = $(OFILES:.o=.d)

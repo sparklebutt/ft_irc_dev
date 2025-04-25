@@ -53,13 +53,13 @@ void Server::create_user(int epollfd) {
 	} else if (errno == EMFILE || errno == ENFILE) {
 		std::cerr << "Too many open files—server may need tuning!" << std::endl;
  	}*/ else {
-		set_current_client_in_progress(client_fd);
  		make_socket_unblocking(client_fd);
 		setup_epoll(epollfd, client_fd, EPOLLIN);
 		// create an instance of new user and add to server map
 		_users[client_fd] = std::make_shared<User>(client_fd);
 		std::cout<<"New user created , fd value is  == "<<_users[client_fd]->getFd()<<std::endl;
 // WELCOME MESSAGE 
+		set_current_client_in_progress(client_fd);
 		if (!_users[client_fd]->get_acknowledged()) {
 			// send message back so server dosnt think we are dead
 			// this might typically be a welcome message

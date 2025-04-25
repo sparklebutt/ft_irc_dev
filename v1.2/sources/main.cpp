@@ -16,6 +16,8 @@
 #include <sys/epoll.h>
 #include "signal_handler.h"
 #include <sys/signalfd.h>
+#include "IrcMessage.hpp"
+#include<string.h>
 //#include <signal.h>
 // irssi commands 
 // / WINDOW LOG ON 
@@ -49,7 +51,8 @@ int loop(Server &server)
 	server.set_signal_fd(signal_mask());
 	setup_epoll(epollfd, server.get_signal_fd(), EPOLLIN);
 	struct epoll_event events[config::MAX_CLIENTS];
-
+	IrcMessage msg;
+	// instance of message class 
 	while (true)
 	{
 		server_ping_count++;
@@ -92,8 +95,22 @@ int loop(Server &server)
 					try
 					{
 						buffer = server.get_user(fd)->receive_message(fd);
-						// 
-					}
+						msg.parse(buffer);
+						if (msg.getCommand() == "NICK")
+						{
+							//const std::string test = msg.getParams();
+							// and nick name not taken yaadiyaa
+							std::string test = IRCMessage::get_nick_msg(msg.getParam(0));
+							send(fd, IRCMessage::nick_msg, strlen(IRCMessage::nick_msg), 0);
+							
+							//send(fd, "401", 3, 0);
+						}
+
+						msg.printMessage(msg);
+
+//						is user has a send message
+// 						msg class method 
+}
 					catch(const ServerException& e)
 					{
 						if (e.getType() == ErrorType::CLIENT_DISCONNECTED)
@@ -105,8 +122,7 @@ int loop(Server &server)
 							continue ;
 					}
 
-
-					std::cout << "Received: " << buffer << std::endl;
+					//std::cout << "Received: " << buffer << std::endl;
 					if (buffer.find("PONG")) {
 						std::cout<<" PONG recived server_ping_count = "<<server_ping_count<<std::endl;;
 					}

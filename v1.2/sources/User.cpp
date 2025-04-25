@@ -42,7 +42,7 @@ std::string User::receive_message(int fd) {
 
 	bytes_read = recv(fd, buffer, sizeof(buffer) - 1, MSG_DONTWAIT); // last flag makes recv non blocking 
 	test = buffer;
-	std::cout<<"checking to see string conversion -----"<<test<<std::endl;
+	//std::cout<<"checking to see string conversion -----"<<test<<std::endl;
 	if (test.find('\n') == std::string::npos)
 	{
 		// here we handle cntrl d buffering to string , using netcat
