@@ -1,6 +1,11 @@
 #pragma once
 #include <exception>
 
+
+/**
+ * @brief here u can define any name for an error , they work on enum basis
+ * 
+ */
 enum class ErrorType {
 	CLIENT_DISCONNECTED,
 	SERVER_SHUTDOWN,
@@ -11,6 +16,10 @@ enum class ErrorType {
 	NO_USER_INMAP
 };
 
+/**
+ * @brief copy paste previouse and make a new error you can throw, remeber to catch the damn thing
+ * 
+ */
 class ServerException : public std::exception {
 	private:
 		ErrorType _type;

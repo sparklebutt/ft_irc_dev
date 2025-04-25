@@ -95,27 +95,8 @@ int loop(Server &server)
 					try
 					{
 						buffer = server.get_user(fd)->receive_message(fd);
-						msg.parse(buffer);
-						if (msg.getCommand() == "NICK")
-						{
-							//const std::string test = msg.getParams();
-							// and nick name not taken yaadiyaa
-							std::string test = IRCMessage::get_nick_msg(msg.getParam(0));
-							send(fd, ":anon!user@localhost NICK :newtuser\r\n", 43, 0);
-							send(fd, "USER anon * :Real Name\r\n", 26, 0);
-							
-							//send(fd, IRCMessage::nick_msg, strlen(IRCMessage::nick_msg), 0);
-							
-							//send(fd, "401", 3, 0);
-						}
-
-						msg.printMessage(msg);
-
-//						is user has a send message
-// 						msg class method 
-}
-					catch(const ServerException& e)
-					{
+						msg.handle_message(server.get_user(fd), buffer);	
+					} catch(const ServerException& e) {
 						if (e.getType() == ErrorType::CLIENT_DISCONNECTED)
 						{
 							server.remove_user(epollfd, fd);
@@ -123,6 +104,7 @@ int loop(Server &server)
 						}
 						if (e.getType() == ErrorType::NO_USER_INMAP)
 							continue ;
+						// here you can catch an error of your choosing if you dont want to catch it in the message handling
 					}
 
 					//std::cout << "Received: " << buffer << std::endl;

@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
 #include <vector>
-
+#include <memory>
+#include "User.hpp"
 // Forward declaration (optional but can sometimes help compile times)
 // class std::string; // No, string is included above.
 
@@ -30,4 +31,11 @@ class IrcMessage
 		const std::string getParam(unsigned long index) const ;
 		void printMessage(const IrcMessage& msg);
 
+
+
+
+	// araveala has added this to help give you full control
+	// naming is changable
+
+	void handle_message(std::shared_ptr<User> user, const std::string message);
 };

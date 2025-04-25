@@ -5,6 +5,11 @@
 #include <stdexcept>
 #include <algorithm> // Required for std::find
 
+
+// my added libs
+#include "config.h"
+#include <sys/socket.h>
+#include "Server_error.hpp" // incase you want to use the exception class
 // --- Constructor ---
 IrcMessage::IrcMessage() {}
 // --- Destructor ---
@@ -173,4 +178,23 @@ void IrcMessage::printMessage(const IrcMessage& msg)
         }
     }
     std::cout << "---" << std::endl; // Separator for messages
+}
+
+
+void IrcMessage::handle_message(std::shared_ptr<User> user, const std::string message)
+{
+	// Here you can handle the message as needed
+	// For example, you can print it or process it further
+	// you also have access to the user object as provided by main
+	parse(message);
+	if (getCommand() == "NICK")
+	{
+		//const std::string test = msg.getParams();
+		// and nick name not taken yaadiyaa
+		std::string test = IRCMessage::get_nick_msg(getParam(0));
+		send(user->getFd(), ":anon!user@localhost NICK :newtuser\r\n", 43, 0);
+	}
+
+	printMessage(*this);
+//	std::cout << "Handling message for user (fd: " << user->getFd() << "): " << message << std::endl;
 }
