@@ -37,6 +37,7 @@ int setup_epoll(int epoll_fd, int fd, uint32_t events)
  */
 int make_socket_unblocking(int fd)
 {
+	
 	int flags = fcntl(fd, F_GETFL, 0);
     if (flags == errVal::FAILURE) {
 		throw ServerException(ErrorType::SOCKET_FAILURE, "fcntl failed to get flags");
@@ -53,7 +54,7 @@ int create_epollfd(Server &server)
 	
 	if (epollfd == errVal::FAILURE)
 		throw ServerException(ErrorType::EPOLL_FAILURE_0, "could not create epollfd");	
-	setup_epoll(epollfd, server.getFd(), EPOLLIN);
+	setup_epoll(epollfd, server.getFd(), EPOLLIN | EPOLLHUP);
 	std::cout<<"seting up epoll signal fd------"<<std::endl;
 	make_socket_unblocking(server.getFd());
 	setup_signal_handler();

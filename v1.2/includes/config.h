@@ -34,7 +34,7 @@ namespace config {
 }
 
 namespace errVal {
-	constexpr int FAILURE = 1;
+	constexpr int FAILURE = -1;
 	constexpr int SUCCESS = 0;
 }
 /**

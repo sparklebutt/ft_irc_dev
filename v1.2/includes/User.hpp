@@ -13,7 +13,7 @@ class User {
 		//std::string _ip;
 		std::string _Nickname;
 		std::string _Fullname;
-		int ping_sent; // std::chrono::steady_clock
+		//int ping_sent; // std::chrono::steady_clock
 		// pointer to current channel object ?
 		// list of channels user is in 
 

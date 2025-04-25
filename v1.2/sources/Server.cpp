@@ -23,7 +23,7 @@ Server::Server(int port , std::string password) {
 }
 // ~~~SETTERS
 void Server::setFd(int fd) { _fd = fd; }
-//void Server::set_signal_fd(int fd) { _signal_fd = fd; }
+void Server::set_signal_fd(int fd) { _signal_fd = fd; }
 // note we may want to check here for values below 0
 void Server::set_event_pollfd(int epollfd)  { _epoll_fd = epollfd; }
 void Server::set_client_count(int val) {  _client_count += val; }
@@ -31,7 +31,7 @@ void Server::set_current_client_in_progress(int fd) { _current_client_in_progres
 
 // ~~~GETTERS
 int Server::getFd() const { return _fd; }
-//int Server::get_signal_fd() const { return _signal_fd; }
+int Server::get_signal_fd() const { return _signal_fd; }
 int Server::get_client_count() const { return _client_count; }
 int Server::getPort() const{ return _port; }
 int Server::get_event_pollfd() const { return _epoll_fd; }
@@ -44,6 +44,7 @@ int Server::get_current_client_in_progress() const { return _current_client_in_p
  */
 void Server::create_user(int epollfd) {
  	// Handle new incoming connection
+	//std::cout<<"does test get bigger = "<<test<<std::cout;
 	int client_fd = accept(getFd(), nullptr, nullptr);
  	if (client_fd < 0) {
 		throw ServerException(ErrorType::ACCEPT_FAILURE, "debuggin: create user");
@@ -169,6 +170,7 @@ void Server::shutdown()
 	std::cout<<"server shutdown completed"<<std::endl;
 	exit(0);
 }
+
 Server::~Server() {
 	shutdown();
 	// delete array/map of users

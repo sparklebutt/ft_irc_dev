@@ -29,7 +29,7 @@ class Server {
 		int _client_count = 0;
 		int _fd;
 		int _current_client_in_progress;
-		//int _signal_fd;
+		int _signal_fd;
 		int _epoll_fd;
 		std::string _password;
 		std::map<int, std::shared_ptr<User>> _users; //unordered map?
@@ -54,7 +54,7 @@ class Server {
 
 		// SETTERS
 		void setFd(int fd);
-		//void set_signal_fd(int fd);
+		void set_signal_fd(int fd);
 		void set_client_count(int val);
 		void set_event_pollfd(int epollfd);
 		void set_current_client_in_progress(int fd);
@@ -63,7 +63,7 @@ class Server {
 		// GETTERS
 		int getPort() const;
 		int getFd() const;
-		//int get_signal_fd() const;
+		int get_signal_fd() const;
 		int get_client_count() const;
 		int get_event_pollfd() const;
 		int get_current_client_in_progress() const;

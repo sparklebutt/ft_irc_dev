@@ -10,15 +10,15 @@ int signal_mask()
 {
 	int fd = 0;
 	sigemptyset(&sigmask);
-	sigaddset(&sigmask, SIGINT);
-	/*if (sigprocmask(SIG_BLOCK, &sigmask, nullptr) == -1) {
+	sigaddset(&sigmask, SIGUSR1);
+	if (sigprocmask(SIG_SETMASK, &sigmask, nullptr) == -1) {
 		perror("sigprocmask failed");
 		exit(EXIT_FAILURE);
-	}*/
-	fd = signalfd(-1, &sigmask, 0);
+	}
+	fd = signalfd(-1, &sigmask, SFD_NONBLOCK);
 	if (fd == -1)
 	{
-		perror("something wromg with sig fd");
+		perror("something wrong with sig fd");
 		exit(EXIT_FAILURE);
 	}
 	std::cout<<"signal fd created = "<<fd<<std::endl;

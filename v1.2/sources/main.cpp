@@ -40,29 +40,44 @@
  */
 int loop(Server &server)
 {
+
 	// applying a ping pong test 
 	int server_ping_count = 0;
-	int server_max_loop = 60;
+	int server_max_loop = 6000;
 	int epollfd = 0;
 	epollfd = create_epollfd(server);	
+	server.set_signal_fd(signal_mask());
+	setup_epoll(epollfd, server.get_signal_fd(), EPOLLIN);
 	struct epoll_event events[config::MAX_CLIENTS];
+
 	while (true)
 	{
 		server_ping_count++;
 		// from epoll fd, in events struct this has niche error handling 
-		int nfds = epoll_wait(epollfd, events, config::MAX_CLIENTS, 50);
+		int nfds = epoll_pwait(epollfd, events, config::MAX_CLIENTS, 50, &sigmask);
 		if (nfds != 0)
 			std::cout << "epoll_wait returned: " << nfds << " events\n";
 		// if nfds == -1 we have perro we should be able to print with perror.
 		for (int i = 0; i < nfds; i++)
 		{
+			if (events[i].events & EPOLLHUP) {
+				std::cout<<"did we catch contrl d with EPOLLHUP?????"<<std::endl;
+			}
 			if (events[i].events & EPOLLIN) {
                 int fd = events[i].data.fd; // Get the associated file descriptor
+				if (fd == server.get_signal_fd()) { 
+					struct signalfd_siginfo si;
+					read(server.get_signal_fd(), &si, sizeof(si));
+					if (si.ssi_signo == SIGUSR1) {
+						std::cout << "SIGNAL received! EPOLL CAUGHT IT YAY..." << std::endl;
+						//server.shutdown();
+						break;
+					}
+				}
 				if (fd == server.getFd()) {
 					try
 					{
 						server.create_user(epollfd);
-						//server.set_client_count(1);
 						std::cout<<server.get_client_count()<<'\n';
 					}
 					catch(const ServerException& e)
@@ -71,11 +86,13 @@ int loop(Server &server)
 						continue ;
 					}
 				}
+				// -------here
 				else {
 					std::string buffer;
 					try
 					{
 						buffer = server.get_user(fd)->receive_message(fd);
+						// 
 					}
 					catch(const ServerException& e)
 					{
@@ -87,6 +104,8 @@ int loop(Server &server)
 						if (e.getType() == ErrorType::NO_USER_INMAP)
 							continue ;
 					}
+
+
 					std::cout << "Received: " << buffer << std::endl;
 					if (buffer.find("PONG")) {
 						std::cout<<" PONG recived server_ping_count = "<<server_ping_count<<std::endl;;
@@ -155,8 +174,8 @@ int main(int argc, char** argv)
 	Server server(port_number, password);
 	// set up global pointer to server for clean up
 	Global::server = &server;
-
-	// server.set_signal_fd(signal_mask());
+	
+	//server.set_signal_fd(signal_mask());
 	// set up server socket through utility function
 	if (setupServerSocket(server) == errVal::FAILURE)
 		std::cout<<"server socket setup failure"<<std::endl;
@@ -197,6 +216,7 @@ int main(int argc, char** argv)
 			case ErrorType::SOCKET_FAILURE:
 			{
 				close (server.get_event_pollfd());
+				std::cout<<"testing failure"<<std::endl;
 				close(server.getFd());
 				std::cerr << e.what() << '\n';
 				break;
