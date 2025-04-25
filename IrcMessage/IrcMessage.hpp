@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
 #include <vector>
-
+#include "User.hpp" // allows modifictaion
+#include <memory>
 // Forward declaration (optional but can sometimes help compile times)
 // class std::string; // No, string is included above.
 
