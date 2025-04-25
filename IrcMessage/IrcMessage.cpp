@@ -1,59 +1,25 @@
 #include "IrcMessage.hpp"
-#include <iostream> // For potential debugging, can remove later
-#include <sstream>  // For string stream operations
-#include <cstddef>  // For size_t
+#include <iostream>
+#include <sstream>
+#include <cstddef>
+#include <stdexcept>
+#include <algorithm> // Required for std::find
 
-IrcMessage::IrcMessage()
-{
-}
+// --- Constructor ---
+IrcMessage::IrcMessage() {}
+// --- Destructor ---
+IrcMessage::~IrcMessage() {}
 
-IrcMessage::~IrcMessage()
-{
+// --- Setters ---
+void IrcMessage::setPrefix(const std::string& prefix) { _prefix = prefix; }
+void IrcMessage::setCommand(const std::string& command) { _command = command; }
 
-}
+// --- Getters ---
+const std::string& IrcMessage::getPrefix() const { return _prefix; }
+const std::string& IrcMessage::getCommand() const { return _command; }
+const std::vector<std::string>& IrcMessage::getParams() const { return _paramsList; }
 
-void IrcMessage::setPrefix(const std::string& prefix)
-{
-    _prefix = prefix;
-}
-
-void IrcMessage::setCommand(const std::string& command)
-{
-    _command = command;
-}
-
-const std::string& IrcMessage::getPrefix() const
-{
-    return _prefix;
-}
-
-const std::string& IrcMessage::getCommand() const
-{
-    return _command;
-}
-
-const std::vector<std::string>& IrcMessage::getParams() const
-{
-    return _paramsList;
-}
-
-// Optional: Implement helper getters for parameters
-// const std::string& IrcMessage::getParam(size_t index) const
-// {
-//     if (index < _paramsList.size()) {
-//         return _paramsList[index];
-//     }
-//     // Handle out of bounds access - throwing an exception is common
-//     throw std::out_of_range("Parameter index out of bounds");
-// }
-
-// size_t IrcMessage::getParamCount() const
-// {
-//     return _paramsList.size();
-// }
-
-
-// --- Parse Method (Core Logic) ---
+// --- Parse Method (Corrected Parameter Handling) ---
 bool IrcMessage::parse(const std::string& rawMessage)
 {
     // 1. Clear previous state
@@ -64,103 +30,130 @@ bool IrcMessage::parse(const std::string& rawMessage)
     // 2. Find the CRLF terminator (\r\n)
     size_t crlf_pos = rawMessage.find("\r\n");
     if (crlf_pos == std::string::npos) {
-        // Message doesn't end with CRLF - invalid format
-        std::cerr << "Error: Message missing CRLF terminator." << std::endl; // Basic error reporting
+        // std::cerr << "Error: Message missing CRLF terminator." << std::endl; // Keep for debugging
         return false;
     }
 
     // Work with the message content before CRLF
     std::string message_content = rawMessage.substr(0, crlf_pos);
-    std::stringstream ss(message_content); // Use stringstream to easily extract parts
+    if (message_content.empty()) {
+         // std::cerr << "Error: Empty message content before CRLF." << std::endl;
+         return false;
+    }
 
-    std::string current_token;
-    ss >> current_token; // Read the first token
+    std::stringstream ss(message_content); // Use stringstream
+
+    std::string first_token;
+    ss >> first_token; // Read the first token
+
+    if (first_token.empty()) {
+        // Should ideally not happen if message_content is not empty
+        return false;
+    }
 
     // 3. Check for prefix (starts with ':')
-    if (!current_token.empty() && current_token[0] == ':') {
-        _prefix = current_token.substr(1); // Store prefix (without the leading ':')
-        ss >> _command; // Read the next token as the command
-        if (_command.empty()) {
-             // Prefix was present, but no command followed - invalid
-             std::cerr << "Error: Prefix present but no command found." << std::endl;
-             // Clear state to indicate failure
-             _prefix.clear();
+    if (first_token[0] == ':') {
+        _prefix = first_token.substr(1); // Store prefix (without the leading ':')
+
+        // Attempt to read the command - must exist after a prefix
+        std::string command_token;
+        if (!(ss >> command_token) || command_token.empty()) {
+             // std::cerr << "Error: Prefix present but no command found after it." << std::endl;
+             _prefix.clear(); // Clear prefix if command is missing
              return false;
         }
+        _command = command_token;
+
     } else {
         // No prefix, the first token is the command
-        _command = current_token;
+        _command = first_token;
     }
 
     // Command is mandatory
     if (_command.empty()) {
-        std::cerr << "Error: No command found." << std::endl;
-        // State is already clear if prefix wasn't found first
-        return false;
+         // std::cerr << "Error: No command found." << std::endl;
+         return false;
     }
 
     // 4. Process parameters
-    // Read the rest of the stringstream line by line to handle trailing parameter
-    std::string params_str;
-    std::getline(ss, params_str); // Reads the rest of the line, including leading space
+    std::string params_part; // String containing all characters after the command/space
+    // Use getline to read the REST of the stringstream's line
+    std::getline(ss, params_part);
 
-    // Trim leading whitespace from params_str (the space after command or prefix)
-    size_t first_char = params_str.find_first_not_of(" ");
-    if (first_char == std::string::npos) {
-        // Only whitespace or empty string remaining - no parameters
-        return true; // Parsing successful, message had prefix/command but no params
+    // Trim leading space(s) that were between command and parameters
+    size_t first_param_char_pos = params_part.find_first_not_of(" ");
+
+    if (first_param_char_pos == std::string::npos) {
+        // No parameters found (only whitespace or empty string remaining)
+        return true; // Parsing successful
     }
-    params_str = params_str.substr(first_char); // params_str now starts at the first non-space char
+
+    // The actual string containing parameters, starting from the first non-space character
+    std::string actual_params_str = params_part.substr(first_param_char_pos);
 
     // Check for trailing parameter (starts with ':')
-    if (!params_str.empty() && params_str[0] == ':') {
-        // The rest of the string (after the colon) is a single parameter
-        _paramsList.push_back(params_str.substr(1)); // Store trailing param (without leading ':')
+    if (!actual_params_str.empty() && actual_params_str[0] == ':') {
+        // The rest of the string *after the colon* is a single parameter.
+        // Handle the case where only ":" is left (empty trailing parameter).
+         if (actual_params_str.length() > 1) {
+             _paramsList.push_back(actual_params_str.substr(1)); // Store content after ':'
+         } else {
+             _paramsList.push_back(""); // The parameter is an empty string (case: "COMMAND :")
+         }
+
     } else {
-        // Split remaining string by spaces into parameters
-        std::stringstream params_ss(params_str);
+        // No leading colon, split parameters by spaces
+        std::stringstream params_ss(actual_params_str);
         std::string param_token;
         while (params_ss >> param_token) {
             _paramsList.push_back(param_token);
         }
     }
 
-    // If we reached here, parsing was successful
+    // If we reached here, parsing of command and parameters was successful
     return true;
 }
 
-std::string IrcMessage::toRawString() const{
 
-    // create the output stream
+// --- toRawString Method (Same as before, should work correctly with fixed parsing) ---
+std::string IrcMessage::toRawString() const
+{
     std::stringstream ss;
 
-    // add prefix
-    if(!_prefix.empty()){
+    // 1. Add prefix if present
+    if (!_prefix.empty()) {
         ss << ":" << _prefix << " ";
     }
 
-    // add command
-    ss << _command
+    // 2. Add command (command is mandatory according to structure)
+    ss << _command;
 
-    // add parameters
-    for (size_t i = 0; i < _paramsList.size(); ++i){
-        // add space seperator
+    // 3. Add parameters
+    for (size_t i = 0; i < _paramsList.size(); ++i) {
+        // All parameters are space-separated
         ss << " ";
+
+        // Check if this is the last parameter AND if it contains a space or is empty
         bool is_last_param = (i == _paramsList.size() - 1);
         bool needs_trailing_prefix = false;
 
-        if (is_last_param){
-            // check if last param contains a space
-            if(_paramsList[i].find(' ') != std::string::npos || _paramList[i].empty()){
-                needs_trailing_prefix = true;
+        if (is_last_param) {
+            // Check if the last parameter contains a space or is empty
+            if (_paramsList[i].find(' ') != std::string::npos || _paramsList[i].empty()) {
+                 needs_trailing_prefix = true;
             }
         }
-        if (needs_trailing_prefix){
-            ss << ":";
+
+        if (needs_trailing_prefix) {
+            ss << ":"; // Add the trailing prefix
         }
+
+        // Add the parameter value
         ss << _paramsList[i];
     }
+
+    // 4. Add the CRLF terminator
     ss << "\r\n";
 
-    return ss.str(); // return the built string
+    return ss.str();
 }

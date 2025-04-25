@@ -5,10 +5,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "IrcMessage.hpp"
 
-#include "IrcMessage.hpp" // Include our IrcMessage class header
-
-// Helper function to print the contents of an IrcMessage object
+// Print the contents of an IrcMessage object
 void printMessage(const IrcMessage& msg)
 {
     std::cout << "  Prefix: '" << msg.getPrefix() << "'" << std::endl;
@@ -46,9 +45,9 @@ int main()
         // Add more test cases as you think of them!
     };
 
-    std::cout << "--- Testing IrcMessage Parsing ---" << std::endl;
+    std::cout << "--- Testing IrcMessage Parsing and Serialisation---" << std::endl;
 
-    // Loop through each raw message and attempt to parse it
+    // Loop through each raw message and attempt to parse it and then serialise it
     for (const std::string& raw_msg : raw_messages)
     {
         std::cout << "Parsing raw message: \"" << raw_msg << "\"" << std::endl;
@@ -61,9 +60,12 @@ int main()
         if (success) {
             std::cout << "  Parsing successful!" << std::endl;
             printMessage(message); // Print the parsed contents
+			// test serialisation with toRawString
+			std::string reserialised_msg = message.toRawString();
+			std::cout << "  Serialised raw message: \"" << reserialised_msg << "\"" << std::endl;
         } else {
             std::cout << "  Parsing failed!" << std::endl;
-            std::cout << "---" << std::endl; // Separator even on failure
+            std::cout << "---" << std::endl;
         }
     }
 
@@ -71,15 +73,4 @@ int main()
 
     return 0;
 }
-
-
-// void parse_buffer(buffer)
-// {
-// 	Class Message(id); 
-		
-// 	vector = std::getline(buffer);
-
-// 	id::getArgs(vector);
-// 	id::getConent(vector);
-// }
 
