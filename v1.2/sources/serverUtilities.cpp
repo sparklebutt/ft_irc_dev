@@ -29,7 +29,7 @@ int setupServerSocket(Server &server)
 
 	sockaddr_in server_address{};
     server_address.sin_family = AF_INET;
-    server_address.sin_addr.s_addr = INADDR_ANY;
+    server_address.sin_addr.s_addr = INADDR_ANY; //can this, should this be different?
     server_address.sin_port = htons(server.getPort());
     // 4. Bind and listen	
 	if (bind(server.getFd(), (sockaddr*)&server_address, sizeof(server_address)) == errVal::FAILURE) {

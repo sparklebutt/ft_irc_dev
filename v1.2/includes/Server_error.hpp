@@ -7,7 +7,8 @@ enum class ErrorType {
 	EPOLL_FAILURE_0,
 	EPOLL_FAILURE_1,
 	SOCKET_FAILURE,
-	ACCEPT_FAILURE
+	ACCEPT_FAILURE,
+	NO_USER_INMAP
 };
 
 class ServerException : public std::exception {
@@ -33,6 +34,7 @@ class ServerException : public std::exception {
 			case ErrorType::EPOLL_FAILURE_1: return "Epoll failed to complete"; // dirty 
 			case ErrorType::SOCKET_FAILURE: return "socket failed to complete";
 			case ErrorType::ACCEPT_FAILURE: return "could not accept client connection";
+			case ErrorType::NO_USER_INMAP: return "no user matching fd found in map, does user exist?"; // refine
 			//case ErrorType::NETWORK_FAILURE: return "Network Failure";
            	//case ErrorType::INVALID_MESSAGE: return "Invalid Message";
            	default: return "Unknown Error";

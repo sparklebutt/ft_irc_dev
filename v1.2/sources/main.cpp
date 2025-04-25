@@ -84,7 +84,8 @@ int loop(Server &server)
 							server.remove_user(epollfd, fd);
 							std::cout<<server.get_client_count()<<'\n';
 						}
-
+						if (e.getType() == ErrorType::NO_USER_INMAP)
+							continue ;
 					}
 					std::cout << "Received: " << buffer << std::endl;
 					if (buffer.find("PONG")) {
@@ -98,7 +99,7 @@ int loop(Server &server)
 		// making this a server method is a easy appraoch that fits our needs just fine!!!
 		//std::cout<<"-----server_ping_count ----"<< server_ping_count<<std::endl;
 		if (server_ping_count >= server_max_loop && server.get_client_count() > 0) { 
-			std::map<int, std::shared_ptr<User>> users = server.get_map();
+			std::map<int, std::shared_ptr<User>>& users = server.get_map();
 			for (std::map<int, std::shared_ptr<User>>::iterator it = users.begin(); it != users.end(); it++)
 			{
 				std::cout<<"-----sending ping ----"<<std::endl;

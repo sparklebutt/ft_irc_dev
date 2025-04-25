@@ -12,7 +12,7 @@
 #include <memory> // shared pointers
 #include "config.h"
 #include "Server_error.hpp"
-
+#include <optional> // nullopt , signifies absence
 class ServerException;
 
 Server::Server() {/*default contructor*/ }
@@ -82,17 +82,18 @@ void Server::remove_user(int epollfd, int client_fd) {
  *  and return a pointer to it 
  * 
  * @param fd the active fd 
- * @return User* 
+ * @return User* , shared pointers are a refrence themselves
  */
 std::shared_ptr<User> Server::get_user(int fd) {
-	auto it = _users.find(fd);
-	if (it != _users.end()) {
-		return it->second;
-	} else
-		return nullptr;
+	for (std::map<int, std::shared_ptr<User>>::iterator it = _users.begin(); it != _users.end(); it++)
+	{
+		if (it->first == fd) 
+			return it->second;
+	}
+	throw ServerException(ErrorType::NO_USER_INMAP, "can not get_user()");
 }
 
-std::map<int, std::shared_ptr<User>> Server::get_map() {
+std::map<int, std::shared_ptr<User>>& Server::get_map() {
 	return _users;
 }
 
@@ -144,7 +145,7 @@ void Server::handle_client_connection_error(ErrorType err_type)
 void Server::shutdown()
 {
 	// close all sockets 
-	for (auto it = _users.begin(); it != _users.end(); ++it)
+	for (std::map<int, std::shared_ptr<User>>::iterator it = _users.begin(); it != _users.end(); it++)
 	{
 		close(it->first);
 	}
@@ -155,7 +156,7 @@ void Server::shutdown()
 	// close epoll fd
 	// close(_epoll_fd);
 	// delete users
-	for (auto it = _users.begin(); it != _users.end(); ++it)
+	for (std::map<int, std::shared_ptr<User>>::iterator it = _users.begin(); it != _users.end(); it++)
 	{
 		it->second.reset();
 	}
