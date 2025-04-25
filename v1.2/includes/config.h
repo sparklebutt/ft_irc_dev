@@ -61,7 +61,10 @@ namespace IRCerr {
 
 namespace IRCMessage {
 	inline constexpr const char* error_msg = "ERROR :Server cannot accept connection, closing.\r\n";
-	inline constexpr const char* welcome_msg = ":server 001 testuser :OK\r\n";
+	//inline constexpr const char* welcome_msg = ":server 001 testuser :OK\r\n";
+	inline constexpr const char* welcome_msg = ":server 001 anon :Welcome to the IRC server\r\n"
+	":server 005 anon PREFIX=(o)@\r\n"
+	":server 005 anon NETWORK=myirc\r\n";
 	inline constexpr const char* ping_msg = "PING :server\r\n";
 	inline constexpr const char* pong_msg = "PONG :server\r\n";
 	inline constexpr const char* pass_msg = "PASS :password\r\n";
