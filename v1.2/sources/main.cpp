@@ -52,10 +52,10 @@ int loop(Server &server)
 		// from epoll fd, in events struct this has niche error handling 
 		int nfds = epoll_wait(epollfd, events, config::MAX_CLIENTS, 50);
 		if (nfds != 0)
-			std::cout << "epoll_pwait returned: " << nfds << " events\n";
+			std::cout << "epoll_wait returned: " << nfds << " events\n";
 		// if nfds == -1 we have perro we should be able to print with perror.
 		for (int i = 0; i < nfds; i++)
-		{	
+		{
 			if (events[i].events & EPOLLIN) {
                 int fd = events[i].data.fd; // Get the associated file descriptor
 				if (fd == server.getFd()) {
@@ -86,8 +86,6 @@ int loop(Server &server)
 						}
 
 					}
-					
-
 					std::cout << "Received: " << buffer << std::endl;
 					if (buffer.find("PONG")) {
 						std::cout<<" PONG recived server_ping_count = "<<server_ping_count<<std::endl;;
@@ -95,7 +93,9 @@ int loop(Server &server)
 				}
             }
 		}
-		// this will be its own function !!!
+		// this will be its own function , server method , due to no forking or threading
+		// and because the server is managing all clients who will also need to be pingponged
+		// making this a server method is a easy appraoch that fits our needs just fine!!!
 		//std::cout<<"-----server_ping_count ----"<< server_ping_count<<std::endl;
 		if (server_ping_count >= server_max_loop && server.get_client_count() > 0) { 
 			std::map<int, std::shared_ptr<User>> users = server.get_map();
@@ -125,9 +125,6 @@ int loop(Server &server)
  */
 int main(int argc, char** argv)
 {
-	//Server localServer;
-	
-
 	int port_number = 6666;
 	std::string password = "password";
 	//if (argc != 3)

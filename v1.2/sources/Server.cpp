@@ -12,27 +12,31 @@
 #include <memory> // shared pointers
 #include "config.h"
 #include "Server_error.hpp"
+
 class ServerException;
+
 Server::Server() {/*default contructor*/ }
 
 Server::Server(int port , std::string password) {
 	_port = port;
 	_password = password;
 }
-// SETTERS
+// ~~~SETTERS
 void Server::setFd(int fd) { _fd = fd; }
 //void Server::set_signal_fd(int fd) { _signal_fd = fd; }
 // note we may want to check here for values below 0
 void Server::set_event_pollfd(int epollfd)  { _epoll_fd = epollfd; }
 void Server::set_client_count(int val) {  _client_count += val; }
 void Server::set_current_client_in_progress(int fd) { _current_client_in_progress = fd; }	
-// GETTERS
+
+// ~~~GETTERS
 int Server::getFd() const { return _fd; }
 //int Server::get_signal_fd() const { return _signal_fd; }
 int Server::get_client_count() const { return _client_count; }
 int Server::getPort() const{ return _port; }
 int Server::get_event_pollfd() const { return _epoll_fd; }
 int Server::get_current_client_in_progress() const { return _current_client_in_progress; }
+
 /**
  * @brief Here a client is accepted , error checked , socket is adusted for non-blocking
  * the client fd is added to the epoll and then added to the user map. a welcome message
@@ -82,11 +86,9 @@ void Server::remove_user(int epollfd, int client_fd) {
  */
 std::shared_ptr<User> Server::get_user(int fd) {
 	auto it = _users.find(fd);
-	if (it != _users.end())
-	{
+	if (it != _users.end()) {
 		return it->second;
-	}
-	else
+	} else
 		return nullptr;
 }
 
@@ -106,21 +108,17 @@ void Server::handle_client_connection_error(ErrorType err_type)
 		case ErrorType::ACCEPT_FAILURE:
 	//		std::cerr << "Error: Accept failed" << std::endl;
 			break;
-		case ErrorType::EPOLL_FAILURE_1:
-		{
+		case ErrorType::EPOLL_FAILURE_1: {
 			send(_current_client_in_progress, IRCMessage::error_msg, strlen(IRCMessage::error_msg), 0);
 			close(_current_client_in_progress);
 			_current_client_in_progress = 0;
 			break;
-		}
-		case ErrorType::SOCKET_FAILURE:
-		{
+		} case ErrorType::SOCKET_FAILURE: {
 			send(_current_client_in_progress, IRCMessage::error_msg, strlen(IRCMessage::error_msg), 0);			
 			close(_current_client_in_progress);
 			_current_client_in_progress = 0;
 			break;
-		}
-		default:
+		} default:
 			std::cerr << "Unknown error occurred" << std::endl;
 			break;
 	}

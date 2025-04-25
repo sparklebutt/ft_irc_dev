@@ -1,5 +1,27 @@
 #pragma once
 
+
+/**
+ * @brief 
+ * this is a header file that contains global variables and constants
+ *
+ * @notes: inline tells the compiler that multiple definitions of this variable
+ * are allowed across different translation units, otherwise it would cause linker errors.
+ * 
+ * constexpr tells the compiler that the value is a constant expression, which will be evaluated 
+ * at compile time. 
+ * 
+ * combining inline with constexpr allows us to define a variable in a header file
+ * as 1 global instance of that variable. 
+ * 
+ * choosing not to use #define is safer as #define is not type safe and can cause
+ * unexpected behavior if not used carefully.
+ * 
+ * alternatily we could define extern const char * instead of inline constexpr
+ * but this would require us to define the variable in a .cpp file , since our values 
+ * want to be imutable , this option is well suited for us.
+ */
+
 class Server;
 namespace Global {
 	inline Server* server = nullptr;
@@ -37,14 +59,15 @@ namespace IRCerr {
 }
 
 namespace IRCMessage {
-	inline constexpr const char*  error_msg = "ERROR :Server cannot accept connection, closing.\r\n";
-	inline constexpr const char*  welcome_msg = ":server 001 OK\r\n";
+	inline constexpr const char* error_msg = "ERROR :Server cannot accept connection, closing.\r\n";
+	inline constexpr const char* welcome_msg = ":server 001 OK\r\n";
 	inline constexpr const char* ping_msg = "PING :server\r\n";
 	inline constexpr const char* pong_msg = "PONG :server\r\n";
 	inline constexpr const char* pass_msg = "PASS :password\r\n";
 	inline constexpr const char* nick_msg = "NICK :nickname\r\n";
 	inline constexpr const char* user_msg = "USER :username 0 * :realname\r\n";
 }
+
 /*
 This is like global variables but its encapsulated in the Config, so its much harder to 
 mix variables of the same name. This is however using namespace , 2 questions: 
