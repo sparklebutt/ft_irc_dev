@@ -101,7 +101,10 @@ int loop(Server &server)
 							//const std::string test = msg.getParams();
 							// and nick name not taken yaadiyaa
 							std::string test = IRCMessage::get_nick_msg(msg.getParam(0));
-							send(fd, IRCMessage::nick_msg, strlen(IRCMessage::nick_msg), 0);
+							send(fd, ":testuser!user@localhost NICK :newtuser\r\n", 43, 0);
+							send(fd, "USER testuser * :Real Name\r\n", 26, 0);
+							
+							//send(fd, IRCMessage::nick_msg, strlen(IRCMessage::nick_msg), 0);
 							
 							//send(fd, "401", 3, 0);
 						}

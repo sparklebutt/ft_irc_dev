@@ -61,7 +61,7 @@ namespace IRCerr {
 
 namespace IRCMessage {
 	inline constexpr const char* error_msg = "ERROR :Server cannot accept connection, closing.\r\n";
-	inline constexpr const char* welcome_msg = ":server 001 OK\r\n";
+	inline constexpr const char* welcome_msg = ":server 001 testuser :OK\r\n";
 	inline constexpr const char* ping_msg = "PING :server\r\n";
 	inline constexpr const char* pong_msg = "PONG :server\r\n";
 	inline constexpr const char* pass_msg = "PASS :password\r\n";
@@ -69,8 +69,10 @@ namespace IRCMessage {
 		std::stringstream ss;
         ss << "@ft_irc new nickname is now :" << nickname << "\r\n";
         return ss.str(); }
-	//inline constexpr const char* nick_msg = ":*!user@ft_irc NICK :helooo\r\n";	
-	inline constexpr const char* nick_msg = "@ft_irc new nickname name is now :nickname\r\n";
+	inline constexpr const char* nick_msg = "*:*!user@localhost NICK :helooo\r\n";	
+	//inline constexpr const char* nick_msg = ":NICK :helooo\r\n";
+	//inline constexpr const char* nick_msg = ":*!user@localhost NICK :helooo\r\n";	
+	//inline constexpr const char* nick_msg = "@ft_irc new nickname name is now :nickname\r\n";
 	inline constexpr const char* user_msg = "USER :username 0 * :realname\r\n";
 }
 
