@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <stdexcept>
 #include <algorithm> // Required for std::find
-
+#include "epoll_utils.hpp"
 
 // my added libs
 #include "config.h"
@@ -193,6 +193,18 @@ void IrcMessage::handle_message(std::shared_ptr<User> user, const std::string me
 		// and nick name not taken yaadiyaa
 		std::string test = IRCMessage::get_nick_msg(getParam(0));
 		send(user->getFd(), ":anon!user@localhost NICK :newtuser\r\n", 43, 0);
+	}
+	if (getCommand() == "PING")
+	{
+		user->sendPong();
+		std::cout<<"senidng pong back "<<std::endl;
+		//user->set_failed_response_counter(-1);
+		//resetClientTimer(user->get_timer_fd(), config::TIMEOUT_CLIENT);
+		//resetClientTimer(user->get_timer_fd(), config::TIMEOUT_CLIENT);
+	}
+	if (getCommand() == "PONG")
+	{
+		std::cout<<"------------------- we recived pong inside message handling haloooooooooo"<<std::endl;
 	}
 
 	printMessage(*this);

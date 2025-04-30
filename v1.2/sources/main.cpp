@@ -39,13 +39,14 @@
  * we might be able to just catch them here, and avoid possible interuption issues.
  * 
  * other things to consider setsocket options? would these be helpfull ?
- * how to test if everything is non blocking
+ * how to test if everything is non blocking MAX CLIENTS IS MAX 510 DUE TO USING EPOLL FOR TIMER_FD ALSO,
+ * SIGNAL FD AND CLIENT FDS AND SERVER FD
  */
 int loop(Server &server)
 {
 	// applying a ping pong test 
-	int server_ping_count = 0;
-	int server_max_loop = 6000;
+	//int server_ping_count = 0;
+	//int server_max_loop = 6000;
 
 	int epollfd = 0;
 	epollfd = create_epollfd(server);	
@@ -57,19 +58,22 @@ int loop(Server &server)
 	// instance of message class 
 	while (true)
 	{
-		server_ping_count++;
+		//server_ping_count++;
 		// from epoll fd, in events struct this has niche error handling 
-		int nfds = epoll_pwait(epollfd, events, config::MAX_CLIENTS, 50, &sigmask);
+		int nfds = epoll_pwait(epollfd, events, config::MAX_CLIENTS, config::TIMEOUT_EPOLL, &sigmask);
 		if (nfds != 0)
 			std::cout << "epoll_wait returned: " << nfds << " events\n";
 		// if nfds == -1 we have perro we should be able to print with perror.
 		for (int i = 0; i < nfds; i++)
 		{
-			if (events[i].events & EPOLLHUP) {
+
+			/*if (events[i].events & EPOLLHUP) {
 				std::cout<<"did we catch contrl d with EPOLLHUP?????"<<std::endl;
-			}
+			}*/
 			if (events[i].events & EPOLLIN) {
                 int fd = events[i].data.fd; // Get the associated file descriptor
+				
+
 				if (fd == server.get_signal_fd()) { 
 					struct signalfd_siginfo si;
 					read(server.get_signal_fd(), &si, sizeof(si));
@@ -89,9 +93,22 @@ int loop(Server &server)
 				}
 				else {
 					std::string buffer;
+					server.checkTimers(fd);
 					try
 					{
 						buffer = server.get_user(fd)->receive_message(fd);
+						if (buffer.find("PONG")) {
+							std::cout<<" PONG recived server_ping_count = "<<server.get_user(fd)->get_failed_response_counter()<<std::endl;;
+							//resetClientTimer(server.get_user(fd)->get_timer_fd(), config::TIMEOUT_CLIENT);
+							//server.get_user(fd)->set_failed_response_counter(-1);
+						}
+						/*if (buffer.find("PONG"))
+						{
+							std::cout<<"------------------- we recived pong inside buffffffer haloooooooooo"<<std::endl;
+						}*/
+						resetClientTimer(server.get_user(fd)->get_timer_fd(), config::TIMEOUT_CLIENT);
+						server.get_user(fd)->set_failed_response_counter(-1);
+
 						msg.handle_message(server.get_user(fd), buffer);	
 					} catch(const ServerException& e) {
 						if (e.getType() == ErrorType::CLIENT_DISCONNECTED)
@@ -105,25 +122,22 @@ int loop(Server &server)
 					}
 
 					//std::cout << "Received: " << buffer << std::endl;
-					if (buffer.find("PONG")) {
-						std::cout<<" PONG recived server_ping_count = "<<server_ping_count<<std::endl;;
-					}
-				}
+					
             }
 		}
 		// this will be its own function , server method , due to no forking or threading
 		// and because the server is managing all clients who will also need to be pingponged
 		// making this a server method is a easy appraoch that fits our needs just fine!!!
 		//std::cout<<"-----server_ping_count ----"<< server_ping_count<<std::endl;
-		if (server_ping_count >= server_max_loop && server.get_client_count() > 0) { 
-			std::map<int, std::shared_ptr<User>>& users = server.get_map();
-			for (std::map<int, std::shared_ptr<User>>::iterator it = users.begin(); it != users.end(); it++)
+		/*if (server_ping_count >= server_max_loop && server.get_client_count() > 0) { 
+			std::map<int, std::pair<std::shared_ptr<User>, int>>& users = server.get_map();
+			for (std::map<int, std::pair<std::shared_ptr<User>, int>>::iterator it = users.begin(); it != users.end(); it++)
 			{
 				std::cout<<"-----sending ping ----"<<std::endl;
 				//safeSend(it->first, "PING :server/r/n"); // try and catch block required sendException
-				it->second->sendPing();
-				server_ping_count = 0;	
-			}
+				it->second.first->sendPing();
+				server_ping_count = 0;
+			}*/
 		}
 	}
 	return 0;

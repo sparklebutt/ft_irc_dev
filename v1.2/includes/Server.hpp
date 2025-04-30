@@ -32,7 +32,7 @@ class Server {
 		int _signal_fd;
 		int _epoll_fd;
 		std::string _password;
-		std::map<int, std::shared_ptr<User>> _users; //unordered map?
+		std::map<int, std::pair<std::shared_ptr<User>, int >>_users; //unordered map?
 		// loop through both to find when ping pong 
 		// map client fd to sent ping time
 		// map client fd to last sent message 
@@ -72,22 +72,22 @@ class Server {
 		// returns a user shared_pointer from the map
 		std::shared_ptr<User> get_user(int fd);
 		// returns the whole map 
-		std::map<int, std::shared_ptr<User>>& get_map();
+		std::map<int, std::pair<std::shared_ptr<User>, int>>& get_map();
 		// message handling
 		void handle_client_connection_error(ErrorType err_type);
 		void acknowladgeUser();
 		void shutdown();
-
+		void checkTimers(int fd);
 };
 
 /**
  * @example template <bool ReadOnly>
-typename std::conditional<ReadOnly, const std::map<int, std::shared_ptr<User>>&, std::map<int, std::shared_ptr<User>>&>::type 
+typename std::conditional<ReadOnly, const std::map<int, std::pair<std::shared_ptr<User>, int>>&, std::map<int, std::pair<std::shared_ptr<User>, int>>&>::type 
 Server::get_map() {
     return _users;
 }
-const std::map<int, std::shared_ptr<User>>& readonly_users = server.get_map<true>(); // Read only access
-std::map<int, std::shared_ptr<User>>& modifiable_users = server.get_map<false>(); 
+const std::map<int, std::pair<std::shared_ptr<User>, int>>& readonly_users = server.get_map<true>(); // Read only access
+std::map<int, std::pair<std::shared_ptr<User>, int>>& modifiable_users = server.get_map<false>(); 
 
 this is if we want to create a const return type so that accidental changes can not be made, it would be good practice to 
 learn to do so 
