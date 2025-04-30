@@ -2,7 +2,7 @@
 #include <string>
 #include <map>
 #include <memory>
-#include "Server_error.hpp"
+#include "ServerError.hpp"
 //#include "user.hpp" // can this be handled withoout including the whole hpp
 
 // connection registration
@@ -68,12 +68,14 @@ class Server {
 		int get_event_pollfd() const;
 		int get_current_client_in_progress() const;
 		std::string get_password() const;
+
 		// returns a user shared_pointer from the map
 		std::shared_ptr<User> get_user(int fd);
 		// returns the whole map 
 		std::map<int, std::shared_ptr<User>>& get_map();
 		// message handling
 		void handle_client_connection_error(ErrorType err_type);
+		void acknowladgeUser();
 		void shutdown();
 
 };

@@ -6,7 +6,7 @@
 #include "Server.hpp"
 #include "serverUtilities.hpp"
 
-#include "Server_error.hpp"
+#include "ServerError.hpp"
 #include "config.h"
 
 int setupServerSocket(Server &server)

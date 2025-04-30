@@ -9,7 +9,7 @@
 // my added libs
 #include "config.h"
 #include <sys/socket.h>
-#include "Server_error.hpp" // incase you want to use the exception class
+#include "ServerError.hpp" // incase you want to use the exception class
 // --- Constructor ---
 IrcMessage::IrcMessage() {}
 // --- Destructor ---

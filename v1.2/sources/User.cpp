@@ -4,9 +4,9 @@
 #include <string.h>
 #include<iostream>
 #include <sys/socket.h>
-#include "config.h"
-#include <Server_error.hpp>
-
+//#include "config.h"
+#include "ServerError.hpp"
+#include "SendException.hpp"
 User::User() {/*default constructor*/}
 
 User::User(int fd) : _fd(fd) { }
@@ -18,6 +18,9 @@ int User::getFd() { return _fd; }
 bool User::get_acknowledged() {
 	return _acknowledged;
 }
+std::string User::getNickname() { return _nickName; }
+std::string User::getuserName() { return _userName; }
+std::string User::getfullName() { return _fullName; }
 
 void User::set_acknowledged() {
 	_acknowledged = true;
@@ -73,4 +76,14 @@ std::string User::receive_message(int fd) {
 		//return ""; // this should be handled with a disconnected function + cleanup.
 	}
 	return std::string(buffer);
+}
+
+void User::setDefaults(int num){
+	_nickName = "nick_anon" + num;
+	_userName = "user_anon" + num;
+	_fullName = "full_anon" + num;
+}
+
+void User::sendPing() {
+	safeSend(_fd, "PING :server/r/n");
 }

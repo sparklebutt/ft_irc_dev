@@ -11,8 +11,10 @@ class User {
 		int _fd;
 		//char buffer[1024];// to recv() too
 		//std::string _ip;
-		std::string _Nickname;
-		std::string _Fullname;
+		std::string _nickName;
+		std::string _userName;
+		std::string _fullName;
+		//std::string _prefixes; // user permissions 
 		//int ping_sent; // std::chrono::steady_clock
 		// pointer to current channel object ?
 		// list of channels user is in 
@@ -27,4 +29,10 @@ class User {
 
 		bool get_acknowledged();
 		void set_acknowledged();
+		std::string getNickname();
+		std::string getuserName();
+		std::string getfullName();
+		void setDefaults(int num);
+
+		void sendPing();
 };

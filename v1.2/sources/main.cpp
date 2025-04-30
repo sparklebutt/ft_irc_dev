@@ -1,6 +1,6 @@
 #include <string>
 #include <iostream>
-#include <sys/socket.h>
+//#include <sys/socket.h>
 #include <netinet/in.h>
 
 #include "Server.hpp"
@@ -11,13 +11,14 @@
 //#include <unistd.h> // close()
 //#include <string.h>
 
-#include "Server_error.hpp"
+#include "ServerError.hpp"
 #include "epoll_utils.hpp"
 #include <sys/epoll.h>
 #include "signal_handler.h"
 #include <sys/signalfd.h>
 #include "IrcMessage.hpp"
-#include<string.h>
+#include <string.h>
+//#include "SendException.hpp"
 //#include <signal.h>
 // irssi commands 
 // / WINDOW LOG ON 
@@ -42,12 +43,13 @@
  */
 int loop(Server &server)
 {
-
 	// applying a ping pong test 
 	int server_ping_count = 0;
 	int server_max_loop = 6000;
+
 	int epollfd = 0;
 	epollfd = create_epollfd(server);	
+
 	server.set_signal_fd(signal_mask());
 	setup_epoll(epollfd, server.get_signal_fd(), EPOLLIN);
 	struct epoll_event events[config::MAX_CLIENTS];
@@ -78,18 +80,13 @@ int loop(Server &server)
 					}
 				}
 				if (fd == server.getFd()) {
-					try
-					{
+					try {
 						server.create_user(epollfd);
-						std::cout<<server.get_client_count()<<'\n';
-					}
-					catch(const ServerException& e)
-					{
+						std::cout<<server.get_client_count()<<'\n'; // debugging
+					} catch(const ServerException& e)	{
 						server.handle_client_connection_error(e.getType());
-						continue ;
 					}
 				}
-				// -------here
 				else {
 					std::string buffer;
 					try
@@ -100,7 +97,7 @@ int loop(Server &server)
 						if (e.getType() == ErrorType::CLIENT_DISCONNECTED)
 						{
 							server.remove_user(epollfd, fd);
-							std::cout<<server.get_client_count()<<'\n';
+							std::cout<<server.get_client_count()<<'\n'; // debugging
 						}
 						if (e.getType() == ErrorType::NO_USER_INMAP)
 							continue ;
@@ -123,7 +120,8 @@ int loop(Server &server)
 			for (std::map<int, std::shared_ptr<User>>::iterator it = users.begin(); it != users.end(); it++)
 			{
 				std::cout<<"-----sending ping ----"<<std::endl;
-				send(it->first, "PING :server/r/n", 14, 0);
+				//safeSend(it->first, "PING :server/r/n"); // try and catch block required sendException
+				it->second->sendPing();
 				server_ping_count = 0;	
 			}
 		}
@@ -226,6 +224,10 @@ int main(int argc, char** argv)
 			default:
 				std::cerr << "Unknown error occurred" << '\n';
 		}
+		
+	} // this is a fail safe catch forf any exception we have forgotten to handle or thrownfrom unknown
+	 catch (const std::exception& e) {
+		std::cout<<"an exception has been caught in main:: "<<e.what()<<std::endl;
 	}
 	// clean up
     close(server.getFd());

@@ -11,7 +11,8 @@
 #include <map>
 #include <memory> // shared pointers
 #include "config.h"
-#include "Server_error.hpp"
+#include "ServerError.hpp"
+//#include "SendException.hpp"
 #include <optional> // nullopt , signifies absence
 class ServerException;
 
@@ -44,7 +45,6 @@ int Server::get_current_client_in_progress() const { return _current_client_in_p
  */
 void Server::create_user(int epollfd) {
  	// Handle new incoming connection
-	//std::cout<<"does test get bigger = "<<test<<std::cout;
 	int client_fd = accept(getFd(), nullptr, nullptr);
  	if (client_fd < 0) {
 		throw ServerException(ErrorType::ACCEPT_FAILURE, "debuggin: create user");
@@ -67,6 +67,8 @@ void Server::create_user(int epollfd) {
 			_users[client_fd]->set_acknowledged();
 		}
 		set_client_count(1);
+		_users[client_fd]->setDefaults(get_client_count());
+		//std::cout<<<<std::endl;
 	}
 }
 
@@ -108,7 +110,6 @@ void Server::handle_client_connection_error(ErrorType err_type)
 	switch (err_type)
 	{
 		case ErrorType::ACCEPT_FAILURE:
-	//		std::cerr << "Error: Accept failed" << std::endl;
 			break;
 		case ErrorType::EPOLL_FAILURE_1: {
 			send(_current_client_in_progress, IRCMessage::error_msg, strlen(IRCMessage::error_msg), 0);
@@ -124,24 +125,6 @@ void Server::handle_client_connection_error(ErrorType err_type)
 			std::cerr << "Unknown error occurred" << std::endl;
 			break;
 	}
-
-	/*if (e.getType() == ErrorType::ACCEPT_FAILURE)
-	{	
-		// client socket couldnt be made non blocking
-		std::cerr << e.what() << '\n';
-	}
-	if (e.getType() == ErrorType::EPOLL_FAILURE_1)
-	{
-		// client couldnt be added to epoll
-		// send error to irssi from config close client fd
-		std::cerr << e.what() << '\n';
-	}
-	if (e.getType() == ErrorType::SOCKET_FAILURE)
-	{
-		// send error to irssi from config close client fd		
-		// client socket couldnt be made non blocking
-		std::cerr << e.what() << '\n';
-	}*/
 }
 void Server::shutdown()
 {
