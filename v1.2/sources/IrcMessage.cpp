@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <algorithm> // Required for std::find
 #include "epoll_utils.hpp"
-
+#include <unistd.h>
 // my added libs
 //#include "config.h"
 #include <sys/socket.h>
@@ -192,15 +192,16 @@ void IrcMessage::handle_message(std::shared_ptr<User> user, const std::string me
 	parse(message);
 	if (getCommand() == "NICK"){
 		//const std::string test = msg.getParams();
-		// and nick name not taken yaadiyaa
+
 		//std::cout<<"prev nick name = #"<< prev_nick<<std::endl;
 		if(server.check_and_set_nickname(getParam(0), user->getFd()))
 		{
 			std::string prev_nick = user->getNickname();
 			//std::cout << "####asdf nickname" << std::endl;
 			user->change_nickname(getParam(0), user->getFd());
-			std::string test1 = ":" + prev_nick + "!user@localhost NICK :" + user->getNickname() + "\r\n";
-			send(user->getFd(), test1.c_str(), test1.length(), 0);
+			std::string test1 = ":" + prev_nick + "!user@localhost NICK :" + getParam(0) + "\r\n";
+			safeSend(user->getFd(), test1);
+			//send(user->getFd(), test1.c_str(), test1.length(), MSG_NOSIGNAL);
 		}
 		else
 		{
@@ -208,7 +209,8 @@ void IrcMessage::handle_message(std::shared_ptr<User> user, const std::string me
 			//std::string arg = IRCerr::ERR_NICKNAMEINUSE;
 			std::string test2 = ":localhost 433 "  + getParam(0) + " :Nickname is already in use" + "\r\n";
 			//std::cout<<"test 2 = ["<<test2<<"]"<<std::endl;
-            send(user->getFd(), test2.c_str(), test2.length(), 0); // todo what is correct format to send error code
+			safeSend(user->getFd(), test2);
+			//send(user->getFd(), test2.c_str(), test2.length(), MSG_NOSIGNAL); // todo what is correct format to send error code
 		}
 		// SEND ERROR CODE
         //    send(user->getFd(), to_string(IRCerr::ERR_NICKNAMEINUSE), // todo what is correct format to send error code

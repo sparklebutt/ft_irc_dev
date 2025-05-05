@@ -67,7 +67,7 @@ std::string User::receive_message(int fd) {
 	ssize_t bytes_read = 0;
 	memset(buffer, 0, sizeof(buffer));
 
-	bytes_read = recv(fd, buffer, sizeof(buffer) - 1, MSG_DONTWAIT); // last flag makes recv non blocking 
+	bytes_read = recv(fd, buffer, sizeof(buffer) - 1, 0);//MSG_DONTWAIT); // last flag makes recv non blocking 
 	test = buffer;
 	//std::cout<<"checking to see string conversion -----"<<test<<std::endl;
 	if (test.find('\n') == std::string::npos)
@@ -77,10 +77,10 @@ std::string User::receive_message(int fd) {
 		std::cout<<"NEW LINE ENDED THE STRING CNTLR D???"<<std::endl;
 	}
 	if (bytes_read > 0) {
-		if (buffer[bytes_read] == '\0')
-			std::cout<<"this was a nul terminated string "<<std::endl;
-		else
-			std::cout<<"something has been read and a null added"<<std::endl;
+		//if (buffer[bytes_read] == '\0')
+		//	std::cout<<"this was a nul terminated string "<<std::endl;
+		//else
+		//	std::cout<<"something has been read and a null added"<<std::endl;
         buffer[bytes_read] = '\0';
 	}
 	else if (bytes_read < 0) {

@@ -203,6 +203,15 @@ bool Server::check_and_set_nickname(std::string nickname, int fd){
 		_nicknames.insert({nickname, fd});
 		return true;
 	}else{
+		auto it2 = std::find_if(_nicknames.begin(), _nicknames.end(),
+        [fd](const auto& pair) { return pair.second == fd; });
+		if (it2 != _nicknames.end())
+		{
+			std::cout<<"erasing and replkacing "<<std::endl;
+			_nicknames.erase(it2);
+			_nicknames.insert({nickname, fd});
+			return true;
+		} 
 		return false;
 	}
 }

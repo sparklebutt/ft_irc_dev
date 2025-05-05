@@ -38,14 +38,14 @@ class SendException : public std::exception {
 
 /* do we have to split this function away into a .cpp file, since its 1 function*/
 inline void safeSend(int fd, const std::string& message) {
-    ssize_t bytes_sent = send(fd, message.c_str(), message.size(), 0);
+    ssize_t bytes_sent = send(fd, message.c_str(), message.size(), MSG_DONTWAIT);
     
     if (bytes_sent == -1) {
 			switch (errno) {
 				case EAGAIN | EWOULDBLOCK: 
 					throw SendException(ErrorType::BUFFER_FULL, "::debugging safesend");
 				case ECONNRESET:
-				throw SendException(ErrorType::CLIENT_DISCONNECTED, "::debugging safesend close the fd here");
+					throw SendException(ErrorType::CLIENT_DISCONNECTED, "::debugging safesend close the fd here");
 				// close(client_fd);  // Cleanup if needed
 				case EBADF:
 					throw SendException(ErrorType::BAD_FD, "::debugging safesend");
