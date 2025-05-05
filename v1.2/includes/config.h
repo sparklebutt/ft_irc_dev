@@ -75,6 +75,7 @@ namespace IRCerr {
 	constexpr int ERR_CANNOTSENDTOCHAN = 404;
 	constexpr int ERR_TOOMANYCHANNELS = 405;
 	constexpr int ERR_WASNOSUCHNICK = 406;
+	constexpr int ERR_NICKNAMEINUSE = 433;
 	constexpr int ERR_NOTREGISTERED = 451;
 	constexpr int ERR_NEEDMOREPARAMS = 461;
 	constexpr int ERR_ALREADYREGISTRED = 462;

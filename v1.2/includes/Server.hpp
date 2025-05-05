@@ -40,6 +40,8 @@ class Server {
 		// num of channels 
 		// string = name of channel channle = channel object
 		// std::map<std::string, std::shared_ptr<Channel>> chanels
+		std::map<std::string, int> _nicknames; //nickname, fd
+		// std::vector<std::string> _nicknames; // as a vector
 	public:
 		Server();
 		Server(int port, std::string password);
@@ -58,6 +60,7 @@ class Server {
 		void set_client_count(int val);
 		void set_event_pollfd(int epollfd);
 		void set_current_client_in_progress(int fd);
+		void set_nickname_in_map(std::string, int); //todo
 		// get channel
 
 		// GETTERS
@@ -78,6 +81,7 @@ class Server {
 		void acknowladgeUser();
 		void shutdown();
 		void checkTimers(int fd);
+		bool check_and_set_nickname(std::string nickname, int fd); //todo
 };
 
 /**

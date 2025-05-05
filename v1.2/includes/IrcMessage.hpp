@@ -37,5 +37,5 @@ class IrcMessage
 	// araveala has added this to help give you full control
 	// naming is changable
 
-	void handle_message(std::shared_ptr<User> user, const std::string message);
+	void handle_message(std::shared_ptr<User> user, const std::string message, Server& server);
 };

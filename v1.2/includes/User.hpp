@@ -40,4 +40,6 @@ class User {
 
 		void sendPing();
 		void sendPong();
+
+		bool change_nickname(std::sting nickname, _fd);
 };

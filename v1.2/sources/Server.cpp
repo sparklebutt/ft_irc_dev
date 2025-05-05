@@ -188,3 +188,25 @@ void Server::checkTimers(int fd)
 		resetClientTimer(it->second.second, config::TIMEOUT_CLIENT);
 	}
 }
+
+bool Server::check_and_set_nickname(std::string nickname, int fd){
+
+	// todo
+	// illegal names vector?
+	// std::check_upper_and_lower
+	//// PING, PONG, server, root, nick, services
+	// filter names, lower case for example?
+	// no numbers
+	// no uppercase
+	// only lowercase
+	// no special characters, inc space
+
+
+	auto it = _nicknames.find(nickname);
+	if (it == _nicknames.end()){
+		_nicknames.insert({nickname, fd});
+		return true;
+	}else{
+		return false;
+	}
+}

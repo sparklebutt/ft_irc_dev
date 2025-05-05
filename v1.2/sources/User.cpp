@@ -2,24 +2,31 @@
 #include "Server.hpp"
 #include <unistd.h>
 #include <string.h>
-#include<iostream>
+#include <iostream>
 #include <sys/socket.h>
 //#include "config.h"
 #include "ServerError.hpp"
 #include "SendException.hpp"
-User::User() {/*default constructor*/}
 
-User::User(int fd, int timer_fd) : _fd(fd), _timer_fd(timer_fd) { }
+User::User(){}
 
-User::~User() {/*default deconstructor*/}
+User::User(int fd, int timer_fd) : _fd(fd), _timer_fd(timer_fd){}
 
-int User::getFd() { return _fd; }
+User::~User(){}
 
-bool User::get_acknowledged() {
+int User::getFd(){
+	return _fd;
+}
+
+bool User::get_acknowledged(){
 	return _acknowledged;
 }
-int User::get_failed_response_counter() {return _failed_response_counter;}
-void User::set_failed_response_counter(int count) {
+
+int User::get_failed_response_counter(){
+	return _failed_response_counter;
+}
+
+void User::set_failed_response_counter(int count){
 	std::cout<<"failed response counter is "
 	<< _failed_response_counter << "new value to be added "
 	<< count <<std::endl;
@@ -27,12 +34,24 @@ void User::set_failed_response_counter(int count) {
 		return ;	
 	_failed_response_counter += count;
 }
-int User::get_timer_fd() { return _timer_fd; }
-std::string User::getNickname() { return _nickName; }
-std::string User::getuserName() { return _userName; }
-std::string User::getfullName() { return _fullName; }
 
-void User::set_acknowledged() {
+int User::get_timer_fd() {
+	return _timer_fd;
+}
+
+std::string User::getNickname() {
+	return _nickName;
+}
+
+std::string User::getuserName() {
+	return _userName;
+}
+
+std::string User::getfullName(){
+	return _fullName;
+}
+
+void User::set_acknowledged(){
 	_acknowledged = true;
 }
 
@@ -95,3 +114,14 @@ void User::sendPing() {
 void User::sendPong() {
 	safeSend(_fd, "PONG :server/r/n");
 }
+
+
+bool User::change_nickname(std::sting nickname, _fd){
+	
+	if(server.check_and_set_nickname(nickname, fd)){
+		this->set_nickname(nickname);
+	}
+	else (0);
+}
+
+

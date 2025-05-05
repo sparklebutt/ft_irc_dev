@@ -10,6 +10,8 @@
 #include "config.h"
 #include <sys/socket.h>
 #include "ServerError.hpp" // incase you want to use the exception class
+#include "Server.hpp"
+
 // --- Constructor ---
 IrcMessage::IrcMessage() {}
 // --- Destructor ---
@@ -181,29 +183,35 @@ void IrcMessage::printMessage(const IrcMessage& msg)
 }
 
 
-void IrcMessage::handle_message(std::shared_ptr<User> user, const std::string message)
+void IrcMessage::handle_message(std::shared_ptr<User> user, const std::string message, Server& server)
 {
 	// Here you can handle the message as needed
 	// For example, you can print it or process it further
 	// you also have access to the user object as provided by main
 	parse(message);
-	if (getCommand() == "NICK")
-	{
+	if (getCommand() == "NICK"){
 		//const std::string test = msg.getParams();
 		// and nick name not taken yaadiyaa
+        if(server.check_and_set_nickname(getParam(0), user->getFd()))
+        // SEND ERROR CODE
+            send(user->getFd(), to_string(IRCerr::ERR_NICKNAMEINUSE), // todo what is correct format to send error code
+            std::cout << "asdf nickname" << std::endl;
 		std::string test = IRCMessage::get_nick_msg(getParam(0));
 		send(user->getFd(), ":anon!user@localhost NICK :newtuser\r\n", 43, 0);
+        // todo check nick against list
+        // todo map of usernames
+        // user creation - add name to list in server
+        // user deletion - remove name from list in server
+
 	}
-	if (getCommand() == "PING")
-	{
+	if (getCommand() == "PING"){
 		user->sendPong();
-		std::cout<<"senidng pong back "<<std::endl;
+		std::cout<<"sending pong back "<<std::endl;
 		//user->set_failed_response_counter(-1);
 		//resetClientTimer(user->get_timer_fd(), config::TIMEOUT_CLIENT);
 		//resetClientTimer(user->get_timer_fd(), config::TIMEOUT_CLIENT);
 	}
-	if (getCommand() == "PONG")
-	{
+	if (getCommand() == "PONG"){
 		std::cout<<"------------------- we recived pong inside message handling haloooooooooo"<<std::endl;
 	}
 

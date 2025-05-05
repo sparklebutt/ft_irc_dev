@@ -93,7 +93,7 @@ int loop(Server &server)
 						}
 						resetClientTimer(server.get_user(fd)->get_timer_fd(), config::TIMEOUT_CLIENT);
 						server.get_user(fd)->set_failed_response_counter(-1);
-						msg.handle_message(server.get_user(fd), buffer);	
+						msg.handle_message(server.get_user(fd), buffer, server);	
 					} catch(const ServerException& e) {
 						if (e.getType() == ErrorType::CLIENT_DISCONNECTED)
 						{
