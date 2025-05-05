@@ -89,21 +89,10 @@ int createTimerFD(int timeout_seconds) {
 }
 
 void resetClientTimer(int timer_fd, int timeout_seconds) {
-    std::cout<<"timer should be reseting checking seconds to set"<<config::TIMEOUT_CLIENT<<std::endl;
+    //std::cout<<"timer should be reseting checking seconds to set"<<config::TIMEOUT_CLIENT<<std::endl;
 
 	struct itimerspec timer_value;
-	/*if (timerfd_gettime(timer_fd, &timer_value) == 0) {
-		std::cout << "Timer reset! Remaining seconds: " << timer_value.it_value.tv_sec << std::endl;
-	} else {
-		std::cerr << "Failed to get timer status!" << std::endl;
-	}*/
 	timer_value.it_value.tv_sec = timeout_seconds;
     timer_value.it_value.tv_nsec = 0;
     timerfd_settime(timer_fd, 0, &timer_value, NULL);  //resets timeout
-	/*if (timerfd_gettime(timer_fd, &timer_value) == 0) {
-		std::cout << "after setting timer Timer reset! Remaining seconds: " << timer_value.it_value.tv_sec << std::endl;
-	} else {
-		std::cerr << "Failed to get timer status!" << std::endl;
-	}*/
-	
 }

@@ -46,9 +46,14 @@ enum class ErrorType {
 
 };
 
+/**
+ * @brief Timeout for client shouyld be 3000 as irssi sends pings every 5 minutes 
+ * we can set it low to showcase how we error handle in the case of a client disconnect
+ * 
+ */
 namespace config {
 	constexpr int MAX_CLIENTS = 10;
-	constexpr int TIMEOUT_CLIENT = 60; // this should be larger than epoll timeout
+	constexpr int TIMEOUT_CLIENT = 3000; // this should be larger than epoll timeout
 	constexpr int TIMEOUT_EPOLL = 30;
 	
 	constexpr int BUFFER_SIZE = 1024;
