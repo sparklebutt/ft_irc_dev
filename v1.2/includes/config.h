@@ -21,6 +21,9 @@
  * alternatily we could define extern const char * instead of inline constexpr
  * but this would require us to define the variable in a .cpp file , since our values 
  * want to be imutable , this option is well suited for us.
+ * 
+ * this file could be seperated into config and error config, if we want to lower
+ * inclusion ammounts in files, lets see
  */
 
 class Server;
@@ -28,9 +31,31 @@ namespace Global {
 	inline Server* server = nullptr;
 }
 
+enum class ErrorType {
+	CLIENT_DISCONNECTED,
+	SERVER_SHUTDOWN,
+	EPOLL_FAILURE_0,
+	EPOLL_FAILURE_1,
+	SOCKET_FAILURE,
+	ACCEPT_FAILURE,
+	NO_USER_INMAP, // next up senderror
+	BUFFER_FULL,
+	BAD_FD,
+	BROKEN_PIPE,
+	UNKNOWN
+
+};
+
+/**
+ * @brief Timeout for client shouyld be 3000 as irssi sends pings every 5 minutes 
+ * we can set it low to showcase how we error handle in the case of a client disconnect
+ * 
+ */
 namespace config {
 	constexpr int MAX_CLIENTS = 10;
-	constexpr int TIMEOUT_CLIENT = 100;
+	constexpr int TIMEOUT_CLIENT = 3000; // this should be larger than epoll timeout
+	constexpr int TIMEOUT_EPOLL = 30;
+	
 	constexpr int BUFFER_SIZE = 1024;
 }
 
@@ -62,9 +87,9 @@ namespace IRCerr {
 namespace IRCMessage {
 	inline constexpr const char* error_msg = "ERROR :Server cannot accept connection, closing.\r\n";
 	//inline constexpr const char* welcome_msg = ":server 001 testuser :OK\r\n";
-	inline constexpr const char* welcome_msg = ":server 001 anon :Welcome to the IRC server\r\n"
-	":server 005 anon PREFIX=(o)@\r\n"
-	":server 005 anon NETWORK=myirc\r\n";
+	inline constexpr const char* welcome_msg = ":server 001 anon :Welcome to the IRC server\r\n";
+	//":server 005 anon PREFIX=(o)@\r\n"
+	//":server 005 anon NETWORK=myirc\r\n";
 	inline constexpr const char* ping_msg = "PING :server\r\n";
 	inline constexpr const char* pong_msg = "PONG :server\r\n";
 	inline constexpr const char* pass_msg = "PASS :password\r\n";
@@ -103,5 +128,4 @@ namespace Config {
 
 #endif // CONFIG_H
 this is used in code like this:
-Config::MAX_NUM
-*/
+Config::MAX_NUM */

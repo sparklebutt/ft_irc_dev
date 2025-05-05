@@ -1,6 +1,6 @@
 #include <string>
 #include <iostream>
-#include <sys/socket.h>
+//#include <sys/socket.h>
 #include <netinet/in.h>
 
 #include "Server.hpp"
@@ -11,13 +11,14 @@
 //#include <unistd.h> // close()
 //#include <string.h>
 
-#include "Server_error.hpp"
+#include "ServerError.hpp"
 #include "epoll_utils.hpp"
 #include <sys/epoll.h>
 #include "signal_handler.h"
 #include <sys/signalfd.h>
 #include "IrcMessage.hpp"
-#include<string.h>
+#include <string.h>
+//#include "SendException.hpp"
 //#include <signal.h>
 // irssi commands 
 // / WINDOW LOG ON 
@@ -38,16 +39,14 @@
  * we might be able to just catch them here, and avoid possible interuption issues.
  * 
  * other things to consider setsocket options? would these be helpfull ?
- * how to test if everything is non blocking
+ * how to test if everything is non blocking MAX CLIENTS IS MAX 510 DUE TO USING EPOLL FOR TIMER_FD ALSO,
+ * SIGNAL FD AND CLIENT FDS AND SERVER FD
  */
 int loop(Server &server)
 {
-
-	// applying a ping pong test 
-	int server_ping_count = 0;
-	int server_max_loop = 6000;
 	int epollfd = 0;
 	epollfd = create_epollfd(server);	
+
 	server.set_signal_fd(signal_mask());
 	setup_epoll(epollfd, server.get_signal_fd(), EPOLLIN);
 	struct epoll_event events[config::MAX_CLIENTS];
@@ -55,17 +54,13 @@ int loop(Server &server)
 	// instance of message class 
 	while (true)
 	{
-		server_ping_count++;
 		// from epoll fd, in events struct this has niche error handling 
-		int nfds = epoll_pwait(epollfd, events, config::MAX_CLIENTS, 50, &sigmask);
+		int nfds = epoll_pwait(epollfd, events, config::MAX_CLIENTS, config::TIMEOUT_EPOLL, &sigmask);
 		if (nfds != 0)
 			std::cout << "epoll_wait returned: " << nfds << " events\n";
 		// if nfds == -1 we have perro we should be able to print with perror.
 		for (int i = 0; i < nfds; i++)
 		{
-			if (events[i].events & EPOLLHUP) {
-				std::cout<<"did we catch contrl d with EPOLLHUP?????"<<std::endl;
-			}
 			if (events[i].events & EPOLLIN) {
                 int fd = events[i].data.fd; // Get the associated file descriptor
 				if (fd == server.get_signal_fd()) { 
@@ -78,54 +73,40 @@ int loop(Server &server)
 					}
 				}
 				if (fd == server.getFd()) {
-					try
-					{
+					try {
 						server.create_user(epollfd);
-						std::cout<<server.get_client_count()<<'\n';
-					}
-					catch(const ServerException& e)
-					{
+						std::cout<<server.get_client_count()<<'\n'; // debugging
+					} catch(const ServerException& e)	{
 						server.handle_client_connection_error(e.getType());
-						continue ;
 					}
 				}
-				// -------here
 				else {
 					std::string buffer;
+					server.checkTimers(fd);
 					try
 					{
 						buffer = server.get_user(fd)->receive_message(fd);
+						if (buffer.find("PONG")) {
+							std::cout<<" PONG recived server_ping_count = "<<server.get_user(fd)->get_failed_response_counter()<<std::endl;;
+							//resetClientTimer(server.get_user(fd)->get_timer_fd(), config::TIMEOUT_CLIENT);
+							//server.get_user(fd)->set_failed_response_counter(-1);
+						}
+						resetClientTimer(server.get_user(fd)->get_timer_fd(), config::TIMEOUT_CLIENT);
+						server.get_user(fd)->set_failed_response_counter(-1);
 						msg.handle_message(server.get_user(fd), buffer);	
 					} catch(const ServerException& e) {
 						if (e.getType() == ErrorType::CLIENT_DISCONNECTED)
 						{
 							server.remove_user(epollfd, fd);
-							std::cout<<server.get_client_count()<<'\n';
+							std::cout<<server.get_client_count()<<'\n'; // debugging
 						}
 						if (e.getType() == ErrorType::NO_USER_INMAP)
 							continue ;
 						// here you can catch an error of your choosing if you dont want to catch it in the message handling
-					}
-
-					//std::cout << "Received: " << buffer << std::endl;
-					if (buffer.find("PONG")) {
-						std::cout<<" PONG recived server_ping_count = "<<server_ping_count<<std::endl;;
-					}
-				}
+					}	
             }
 		}
-		// this will be its own function , server method , due to no forking or threading
-		// and because the server is managing all clients who will also need to be pingponged
-		// making this a server method is a easy appraoch that fits our needs just fine!!!
-		//std::cout<<"-----server_ping_count ----"<< server_ping_count<<std::endl;
-		if (server_ping_count >= server_max_loop && server.get_client_count() > 0) { 
-			std::map<int, std::shared_ptr<User>>& users = server.get_map();
-			for (std::map<int, std::shared_ptr<User>>::iterator it = users.begin(); it != users.end(); it++)
-			{
-				std::cout<<"-----sending ping ----"<<std::endl;
-				send(it->first, "PING :server/r/n", 14, 0);
-				server_ping_count = 0;	
-			}
+
 		}
 	}
 	return 0;
@@ -226,6 +207,10 @@ int main(int argc, char** argv)
 			default:
 				std::cerr << "Unknown error occurred" << '\n';
 		}
+		
+	} // this is a fail safe catch forf any exception we have forgotten to handle or thrownfrom unknown
+	 catch (const std::exception& e) {
+		std::cout<<"an exception has been caught in main:: "<<e.what()<<std::endl;
 	}
 	// clean up
     close(server.getFd());

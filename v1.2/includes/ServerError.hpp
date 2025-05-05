@@ -1,20 +1,7 @@
 #pragma once
 #include <exception>
+#include "config.h"
 
-
-/**
- * @brief here u can define any name for an error , they work on enum basis
- * 
- */
-enum class ErrorType {
-	CLIENT_DISCONNECTED,
-	SERVER_SHUTDOWN,
-	EPOLL_FAILURE_0,
-	EPOLL_FAILURE_1,
-	SOCKET_FAILURE,
-	ACCEPT_FAILURE,
-	NO_USER_INMAP
-};
 
 /**
  * @brief copy paste previouse and make a new error you can throw, remeber to catch the damn thing
@@ -41,7 +28,7 @@ class ServerException : public std::exception {
         	case ErrorType::SERVER_SHUTDOWN: return "server shutdown destroying evrything hold .....";
 			case ErrorType::EPOLL_FAILURE_0: return "Epoll failed to complete"; //clean
 			case ErrorType::EPOLL_FAILURE_1: return "Epoll failed to complete"; // dirty 
-			case ErrorType::SOCKET_FAILURE: return "socket failed to complete";
+			case ErrorType::SOCKET_FAILURE: return "socket failed to complete"; // can i move this to socket exception
 			case ErrorType::ACCEPT_FAILURE: return "could not accept client connection";
 			case ErrorType::NO_USER_INMAP: return "no user matching fd found in map, does user exist?"; // refine
 			//case ErrorType::NETWORK_FAILURE: return "Network Failure";

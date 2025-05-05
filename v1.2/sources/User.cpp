@@ -4,12 +4,12 @@
 #include <string.h>
 #include<iostream>
 #include <sys/socket.h>
-#include "config.h"
-#include <Server_error.hpp>
-
+//#include "config.h"
+#include "ServerError.hpp"
+#include "SendException.hpp"
 User::User() {/*default constructor*/}
 
-User::User(int fd) : _fd(fd) { }
+User::User(int fd, int timer_fd) : _fd(fd), _timer_fd(timer_fd) { }
 
 User::~User() {/*default deconstructor*/}
 
@@ -18,6 +18,19 @@ int User::getFd() { return _fd; }
 bool User::get_acknowledged() {
 	return _acknowledged;
 }
+int User::get_failed_response_counter() {return _failed_response_counter;}
+void User::set_failed_response_counter(int count) {
+	std::cout<<"failed response counter is "
+	<< _failed_response_counter << "new value to be added "
+	<< count <<std::endl;
+	if ( count < 0 && _failed_response_counter == 0)
+		return ;	
+	_failed_response_counter += count;
+}
+int User::get_timer_fd() { return _timer_fd; }
+std::string User::getNickname() { return _nickName; }
+std::string User::getuserName() { return _userName; }
+std::string User::getfullName() { return _fullName; }
 
 void User::set_acknowledged() {
 	_acknowledged = true;
@@ -25,12 +38,7 @@ void User::set_acknowledged() {
 
 /**
  * @brief Reads using recv() to a char buffer as data recieved from the socket
- * comes in as raw bytes, std::string does not handle this kind of raw data very well,
- * string can also cause un predictable behaviour due to null terminator.
- * 
- * if bytes read is 0 client is is suspected to be disconnected and related cleanup
- * should follow
- * 
+ * comes in as raw bytes, std		void sendPing();
  * @return FAIL an empty string or throw 
  * SUCCESS the char buffer converted to std::string
  */
@@ -73,4 +81,17 @@ std::string User::receive_message(int fd) {
 		//return ""; // this should be handled with a disconnected function + cleanup.
 	}
 	return std::string(buffer);
+}
+
+void User::setDefaults(int num){
+	_nickName = "nick_anon" + num;
+	_userName = "user_anon" + num;
+	_fullName = "full_anon" + num;
+}
+
+void User::sendPing() {
+	safeSend(_fd, "PING :server/r/n");
+}
+void User::sendPong() {
+	safeSend(_fd, "PONG :server/r/n");
 }
