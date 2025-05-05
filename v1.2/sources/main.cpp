@@ -58,6 +58,11 @@ int loop(Server &server)
 		int nfds = epoll_pwait(epollfd, events, config::MAX_CLIENTS, config::TIMEOUT_EPOLL, &sigmask);
 		if (nfds != 0)
 			std::cout << "epoll_wait returned: " << nfds << " events\n";
+			/*if (errno == EINTR) {
+		std::cerr << "accept() interrupted by signal, retrying..." << std::endl;
+	} else if (errno == EMFILE || errno == ENFILE) {
+		std::cerr << "Too many open files—server may need tuning!" << std::endl;
+ 	}*/
 		// if nfds == -1 we have perro we should be able to print with perror.
 		for (int i = 0; i < nfds; i++)
 		{
@@ -68,6 +73,7 @@ int loop(Server &server)
 					read(server.get_signal_fd(), &si, sizeof(si));
 					if (si.ssi_signo == SIGUSR1) {
 						std::cout << "SIGNAL received! EPOLL CAUGHT IT YAY..." << std::endl;
+						// how to force certian signals to catch and handle
 						//server.shutdown();
 						break;
 					}

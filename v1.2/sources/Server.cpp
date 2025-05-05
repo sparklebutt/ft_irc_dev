@@ -49,14 +49,11 @@ void Server::create_user(int epollfd) {
 	int client_fd = accept(getFd(), nullptr, nullptr);
  	if (client_fd < 0) {
 		throw ServerException(ErrorType::ACCEPT_FAILURE, "debuggin: create user");
-	} /*if (errno == EINTR) {
-		std::cerr << "accept() interrupted by signal, retrying..." << std::endl;
-	} else if (errno == EMFILE || errno == ENFILE) {
-		std::cerr << "Too many open files—server may need tuning!" << std::endl;
- 	}*/ else {
+	}  else {
  		make_socket_unblocking(client_fd);
 		setup_epoll(epollfd, client_fd, EPOLLIN);
 		int timer_fd = setup_epoll_timer(epollfd, config::TIMEOUT_CLIENT);
+		// errro handling if timer_fd failed
 		// create an instance of new user and add to server map
 		_users[client_fd] = {std::make_shared<User>(client_fd, timer_fd), timer_fd};
 		std::cout<<"New user created , fd value is  == "<<_users[client_fd].first->getFd()<<std::endl;
@@ -64,13 +61,11 @@ void Server::create_user(int epollfd) {
 		set_current_client_in_progress(client_fd);
 		if (!_users[client_fd].first->get_acknowledged()) {
 			// send message back so server dosnt think we are dead
-			// this might typically be a welcome message
 			send(client_fd, IRCMessage::welcome_msg, strlen(IRCMessage::welcome_msg), 0);
 			_users[client_fd].first->set_acknowledged();
 		}
 		set_client_count(1);
 		_users[client_fd].first->setDefaults(get_client_count());
-		//std::cout<<<<std::endl;
 	}
 }
 
@@ -201,9 +196,10 @@ bool Server::check_and_set_nickname(std::string nickname, int fd){
 	// only lowercase
 	// no special characters, inc space
 
-
+	std::cout << "###check and set nickname called " << std::endl;
 	auto it = _nicknames.find(nickname);
 	if (it == _nicknames.end()){
+		std::cout << "####adding nickname to map" << std::endl;
 		_nicknames.insert({nickname, fd});
 		return true;
 	}else{

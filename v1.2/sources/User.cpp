@@ -103,9 +103,9 @@ std::string User::receive_message(int fd) {
 }
 
 void User::setDefaults(int num){
-	_nickName = "nick_anon" + num;
-	_userName = "user_anon" + num;
-	_fullName = "full_anon" + num;
+	_nickName = "anon"; //+ num;
+	_userName = "useranon" + num;
+	_fullName = "fullanon" + num;
 }
 
 void User::sendPing() {
@@ -116,12 +116,15 @@ void User::sendPong() {
 }
 
 
-bool User::change_nickname(std::sting nickname, _fd){
+bool User::change_nickname(std::string nickname, int fd){
 	
-	if(server.check_and_set_nickname(nickname, fd)){
-		this->set_nickname(nickname);
-	}
-	else (0);
+	_nickName.clear();
+	_nickName = nickname;
+	std::cout<<"hey look its a fd = "<<fd<<std::endl;
+	//this->set_nickname(nickname);
+
+//	else (0);
+	return true;
 }
 
 

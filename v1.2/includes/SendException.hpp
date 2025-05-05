@@ -37,7 +37,7 @@ class SendException : public std::exception {
 };
 
 /* do we have to split this function away into a .cpp file, since its 1 function*/
-void safeSend(int fd, const std::string& message) {
+inline void safeSend(int fd, const std::string& message) {
     ssize_t bytes_sent = send(fd, message.c_str(), message.size(), 0);
     
     if (bytes_sent == -1) {

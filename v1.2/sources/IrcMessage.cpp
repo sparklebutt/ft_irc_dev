@@ -7,11 +7,11 @@
 #include "epoll_utils.hpp"
 
 // my added libs
-#include "config.h"
+//#include "config.h"
 #include <sys/socket.h>
 #include "ServerError.hpp" // incase you want to use the exception class
 #include "Server.hpp"
-
+#include "SendException.hpp"
 // --- Constructor ---
 IrcMessage::IrcMessage() {}
 // --- Destructor ---
@@ -77,7 +77,8 @@ bool IrcMessage::parse(const std::string& rawMessage)
         _command = first_token;
     }
 
-    // Command is mandatory
+    // Command is mandatory		safeSend(user->getFd(), test1);
+
     if (_command.empty()) {
          // std::cerr << "Error: No command found." << std::endl;
          return false;
@@ -192,12 +193,28 @@ void IrcMessage::handle_message(std::shared_ptr<User> user, const std::string me
 	if (getCommand() == "NICK"){
 		//const std::string test = msg.getParams();
 		// and nick name not taken yaadiyaa
-        if(server.check_and_set_nickname(getParam(0), user->getFd()))
-        // SEND ERROR CODE
-            send(user->getFd(), to_string(IRCerr::ERR_NICKNAMEINUSE), // todo what is correct format to send error code
-            std::cout << "asdf nickname" << std::endl;
-		std::string test = IRCMessage::get_nick_msg(getParam(0));
-		send(user->getFd(), ":anon!user@localhost NICK :newtuser\r\n", 43, 0);
+		//std::cout<<"prev nick name = #"<< prev_nick<<std::endl;
+		if(server.check_and_set_nickname(getParam(0), user->getFd()))
+		{
+			std::string prev_nick = user->getNickname();
+			//std::cout << "####asdf nickname" << std::endl;
+			user->change_nickname(getParam(0), user->getFd());
+			std::string test1 = ":" + prev_nick + "!user@localhost NICK :" + user->getNickname() + "\r\n";
+			send(user->getFd(), test1.c_str(), test1.length(), 0);
+		}
+		else
+		{
+			//std::cout<<"else statement triggered for NICK"<<std::endl;
+			//std::string arg = IRCerr::ERR_NICKNAMEINUSE;
+			std::string test2 = ":localhost 433 "  + getParam(0) + " :Nickname is already in use" + "\r\n";
+			//std::cout<<"test 2 = ["<<test2<<"]"<<std::endl;
+            send(user->getFd(), test2.c_str(), test2.length(), 0); // todo what is correct format to send error code
+		}
+		// SEND ERROR CODE
+        //    send(user->getFd(), to_string(IRCerr::ERR_NICKNAMEINUSE), // todo what is correct format to send error code
+
+
+//		send(user->getFd(), ":anon!user@localhost NICK :newtuser\r\n", 43, 0);
         // todo check nick against list
         // todo map of usernames
         // user creation - add name to list in server
@@ -218,3 +235,14 @@ void IrcMessage::handle_message(std::shared_ptr<User> user, const std::string me
 	printMessage(*this);
 //	std::cout << "Handling message for user (fd: " << user->getFd() << "): " << message << std::endl;
 }
+		/*std::string test1 = ":"+ prev_nick +"!user@localhost NICK :" + user->getNickname() + "\r\n";
+		try
+		{
+			safeSend(user->getFd(), ":"+ prev_nick +"!user@localhost NICK :" + user->getNickname() + "\r\n");			
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+		}*/
+		
+		//send(user->getFd(), test1.c_str(), test1.length(), 0);
