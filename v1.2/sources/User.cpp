@@ -35,15 +35,15 @@ void User::set_failed_response_counter(int count){
 	_failed_response_counter += count;
 }
 
-int User::get_timer_fd() {
+int User::get_timer_fd(){
 	return _timer_fd;
 }
 
-std::string User::getNickname() {
+std::string User::getNickname(){
 	return _nickName;
 }
 
-std::string User::getuserName() {
+std::string User::getuserName(){
 	return _userName;
 }
 
@@ -117,14 +117,14 @@ void User::sendPong() {
 
 
 bool User::change_nickname(std::string nickname, int fd){
-	
 	_nickName.clear();
 	_nickName = nickname;
-	std::cout<<"hey look its a fd = "<<fd<<std::endl;
+	std::cout<<"hey look its a fd = "<< fd << std::endl;
 	//this->set_nickname(nickname);
 
 //	else (0);
 	return true;
 }
+
 
 

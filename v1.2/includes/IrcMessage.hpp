@@ -32,8 +32,6 @@ class IrcMessage
 		void printMessage(const IrcMessage& msg);
 
 
-
-
 	// araveala has added this to help give you full control
 	// naming is changable
 

@@ -3,6 +3,10 @@
 #include <map>
 #include <memory>
 #include "ServerError.hpp"
+#include <set>
+#include <algorithm> // ai For std::transform
+#include <cctype>    // ai For std::tolower, std::islower
+#include <vector>    // ai Just for the initial list concept, set is better for lookup
 //#include "user.hpp" // can this be handled withoout including the whole hpp
 
 // connection registration
@@ -25,7 +29,7 @@
 class User;
 class Server {
 	private:
-		int _port;
+	int _port;
 		int _client_count = 0;
 		int _fd;
 		int _current_client_in_progress;
@@ -33,15 +37,38 @@ class Server {
 		int _epoll_fd;
 		std::string _password;
 		std::map<int, std::pair<std::shared_ptr<User>, int >>_users; //unordered map?
+		// start of new section
+		std::map<std::string, int> nickname_to_fd;
+		std::map<int, std::string> fd_to_nickname;
+		static const std::set<std::string> _illegal_nicknames;
+		// Helper function to convert a string to lowercase (defined inline in header)
+		static std::string to_lowercase(const std::string& s) {
+			std::string lower_s = s;
+			std::transform(lower_s.begin(), lower_s.end(), lower_s.begin(),
+						   [](unsigned char c){ return std::tolower(c); });
+			return lower_s;
+		}
+		// end of new section
+		
 		// loop through both to find when ping pong 
 		// map client fd to sent ping time
 		// map client fd to last sent message 
-
+		
 		// num of channels 
 		// string = name of channel channle = channel object
 		// std::map<std::string, std::shared_ptr<Channel>> chanels
-		std::map<std::string, int> _nicknames; //nickname, fd
-		// std::vector<std::string> _nicknames; // as a vector
+		std::map<std::string, int> _nickname_to_fd;
+		std::map<int, std::string> _fd_to_nickname;
+		
+		static const std::set<std::string> _illegal_nicknames;
+		
+		
+		// Using std::map for nicknames; use std::unordered_map if preferred
+		// #include <unordered_map>
+		
+	
+
+
 	public:
 		Server();
 		Server(int port, std::string password);
@@ -54,6 +81,9 @@ class Server {
 		void remove_user(int epollfd, int client_fd);
 		// remove channel
 
+
+		
+		
 		// SETTERS
 		void setFd(int fd);
 		void set_signal_fd(int fd);
@@ -61,17 +91,20 @@ class Server {
 		void set_event_pollfd(int epollfd);
 		void set_current_client_in_progress(int fd);
 		void set_nickname_in_map(std::string, int); //todo
+		bool check_and_set_nickname(std::string nickname, int fd);  // ai
 		// get channel
-
+		
 		// GETTERS
 		int getPort() const;
 		int getFd() const;
+		int get_fd(const std::string& nickname) const;  // ai
 		int get_signal_fd() const;
 		int get_client_count() const;
 		int get_event_pollfd() const;
 		int get_current_client_in_progress() const;
 		std::string get_password() const;
-
+		std::string get_nickname(int fd) const;  // ai
+		
 		// returns a user shared_pointer from the map
 		std::shared_ptr<User> get_user(int fd);
 		// returns the whole map 
@@ -81,18 +114,19 @@ class Server {
 		void acknowladgeUser();
 		void shutdown();
 		void checkTimers(int fd);
-		bool check_and_set_nickname(std::string nickname, int fd); //todo
-};
-
-/**
- * @example template <bool ReadOnly>
-typename std::conditional<ReadOnly, const std::map<int, std::pair<std::shared_ptr<User>, int>>&, std::map<int, std::pair<std::shared_ptr<User>, int>>&>::type 
-Server::get_map() {
-    return _users;
-}
-const std::map<int, std::pair<std::shared_ptr<User>, int>>& readonly_users = server.get_map<true>(); // Read only access
-std::map<int, std::pair<std::shared_ptr<User>, int>>& modifiable_users = server.get_map<false>(); 
-
-this is if we want to create a const return type so that accidental changes can not be made, it would be good practice to 
+		void remove_fd(int fd);  // ai
+	};
+	
+	/**
+	 * @example template <bool ReadOnly>
+	 typename std::conditional<ReadOnly, const std::map<int, std::pair<std::shared_ptr<User>, int>>&, std::map<int, std::pair<std::shared_ptr<User>, int>>&>::type 
+	 Server::get_map() {
+		return _users;
+		}
+		const std::map<int, std::pair<std::shared_ptr<User>, int>>& readonly_users = server.get_map<true>(); // Read only access
+		std::map<int, std::pair<std::shared_ptr<User>, int>>& modifiable_users = server.get_map<false>(); 
+		
+		this is if we want to create a const return type so that accidental changes can not be made, it would be good practice to 
 learn to do so 
  */
+
