@@ -200,6 +200,7 @@ void IrcMessage::handle_message(std::shared_ptr<User> user, const std::string me
 			//std::cout << "####asdf nickname" << std::endl;
 			user->change_nickname(getParam(0), user->getFd());
 			std::string test1 = ":" + prev_nick + "!user@localhost NICK :" + user->getNickname() + "\r\n";
+			std::cout<<"SHOWING TEST1 = ["<<test1<<"]\n";
 			send(user->getFd(), test1.c_str(), test1.length(), 0);
 		}
 		else
