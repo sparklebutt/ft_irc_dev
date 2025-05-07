@@ -108,7 +108,7 @@ class Server {
 		void handle_client_connection_error(ErrorType err_type);
 		void acknowladgeClient();
 		void shutdown();
-		void checkTimers(int fd);
+		bool checkTimers(int fd);
 		void remove_fd(int fd);  // ai
 	};
 	

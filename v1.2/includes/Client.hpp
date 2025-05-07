@@ -1,10 +1,10 @@
 #pragma once
 #include <string>
-
 // https://modern.ircdocs.horse/#client-to-server-protocol-structure
 // Names of IRC entities (clients, servers, channels) are casemapped
 
 class Server;
+class IrcMessage;
 
 class Client {
 	private:
@@ -28,7 +28,7 @@ class Client {
 		Client();
 		Client(int fd, int timer_fd);
 		~Client();
-		std::string receive_message(int fd);
+		void receive_message(int fd, IrcMessage& msg, Server& server);
 		int getFd();
 		int get_failed_response_counter();
 		void set_failed_response_counter(int count);
@@ -46,5 +46,5 @@ class Client {
 		bool change_nickname(std::string nickname, int fd);
 
 		std::string getReadBuff();
-		void setReadBuff(std::string& buffer);
+		void setReadBuff(const std::string& buffer);
 };

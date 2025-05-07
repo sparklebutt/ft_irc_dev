@@ -187,7 +187,7 @@ void IrcMessage::printMessage(const IrcMessage& msg)
 }
 
 
-void IrcMessage::handle_message(std::shared_ptr<Client> Client, const std::string message, Server& server)
+void IrcMessage::handle_message(Client& Client, const std::string message, Server& server) //std::shared_ptr<Client> Client,
 {
 	// Here you can handle the message as needed
 	// For example, you can print it or process it further
@@ -197,15 +197,15 @@ void IrcMessage::handle_message(std::shared_ptr<Client> Client, const std::strin
 		//const std::string test = msg.getParams();
 		// and nick name not taken yaadiyaa
 		//std::cout<<"prev nick name = #"<< prev_nick<<std::endl;
-		if(server.check_and_set_nickname(getParam(0), Client->getFd()))
+		if(server.check_and_set_nickname(getParam(0), Client.getFd()))
 		{
-			std::string prev_nick = Client->getNickname();
+			std::string prev_nick = Client.getNickname();
 			//std::cout << "####asdf nickname" << std::endl;
-			Client->change_nickname(getParam(0), Client->getFd());
-			std::string test1 = ":" + prev_nick + "!Client@localhost NICK :" + Client->getNickname() + "\r\\n";
+			Client.change_nickname(getParam(0), Client.getFd());
+			std::string test1 = ":" + prev_nick + "!Client@localhost NICK :" + Client.getNickname() + "\r\n";
 			std::cout<<"SHOWING TEST1 = ["<<test1<<"]\n";
 			//char *test2 = RPL_NICK(prev_nick, "@localhost", Client->getNickname());
-			send(Client->getFd(), test1.c_str(), test1.length(), 0);
+			send(Client.getFd(), test1.c_str(), test1.length(), 0);
 		}
 		else
 		{
@@ -213,7 +213,7 @@ void IrcMessage::handle_message(std::shared_ptr<Client> Client, const std::strin
 			//std::string arg = IRCerr::ERR_NICKNAMEINUSE;
 			std::string test2 = ":localhost 433 "  + getParam(0) + " :Nickname is already in use" + "\r\n";
 			//std::cout<<"test 2 = ["<<test2<<"]"<<std::endl;
-            send(Client->getFd(), test2.c_str(), test2.length(), 0); // todo what is correct format to send error code
+            send(Client.getFd(), test2.c_str(), test2.length(), 0); // todo what is correct format to send error code
 		}
 		// SEND ERROR CODE
         //    send(Client->getFd(), to_string(IRCerr::ERR_NICKNAMEINUSE), // todo what is correct format to send error code
@@ -227,7 +227,7 @@ void IrcMessage::handle_message(std::shared_ptr<Client> Client, const std::strin
 
 	}
 	if (getCommand() == "PING"){
-		Client->sendPong();
+		Client.sendPong();
 		std::cout<<"sending pong back "<<std::endl;
 		//Client->set_failed_response_counter(-1);
 		//resetClientTimer(Client->get_timer_fd(), config::TIMEOUT_CLIENT);

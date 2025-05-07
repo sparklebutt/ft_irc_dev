@@ -87,32 +87,25 @@ int loop(Server &server)
 					}
 				}
 				else {
-					std::string buffer;
-					server.checkTimers(fd);
-					try
+					bool read_to_buffer = server.checkTimers(fd);
+					if (read_to_buffer == true)
 					{
-						buffer = server.get_Client(fd)->receive_message(fd); // add msg object here
-						if (buffer.find("PONG")) {
-							std::cout<<" PONG recived server_ping_count = "<<server.get_Client(fd)->get_failed_response_counter()<<std::endl;;
-							//resetClientTimer(server.get_Client(fd)->get_timer_fd(), config::TIMEOUT_CLIENT);
-							//server.get_Client(fd)->set_failed_response_counter(-1);
-						}
-						resetClientTimer(server.get_Client(fd)->get_timer_fd(), config::TIMEOUT_CLIENT);
-						server.get_Client(fd)->set_failed_response_counter(-1);
-						msg.handle_message(server.get_Client(fd), buffer, server);	
-					} catch(const ServerException& e) {
-						if (e.getType() == ErrorType::CLIENT_DISCONNECTED)
-						{
-							server.remove_Client(epollfd, fd);
-							std::cout<<server.get_client_count()<<'\n'; // debugging
-						}
-						if (e.getType() == ErrorType::NO_Client_INMAP)
-							continue ;
-						// here you can catch an error of your choosing if you dont want to catch it in the message handling
-					}	
-            }
-		}
-
+							try
+							{
+								server.get_Client(fd)->receive_message(fd, msg, server); // add msg object here
+							} catch(const ServerException& e) {
+								if (e.getType() == ErrorType::CLIENT_DISCONNECTED)
+								{
+									server.remove_Client(epollfd, fd);
+									std::cout<<server.get_client_count()<<'\n'; // debugging
+								}
+								if (e.getType() == ErrorType::NO_Client_INMAP)
+									continue ;
+								// here you can catch an error of your choosing if you dont want to catch it in the message handling
+							}	
+					}
+				}
+			}
 		}
 	}
 	return 0;

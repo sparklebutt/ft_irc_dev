@@ -7,6 +7,8 @@
 //#include "config.h"
 #include "ServerError.hpp"
 #include "SendException.hpp"
+#include "epoll_utils.hpp" // reset client timer
+#include "IrcMessage.hpp"
 
 Client::Client(){}
 
@@ -56,7 +58,7 @@ std::string Client::getReadBuff() {
 
 }
 
-void Client::setReadBuff(std::string& buffer) {
+void Client::setReadBuff(const std::string& buffer) {
 	_read_buff += buffer;
 }
 
@@ -70,22 +72,19 @@ void Client::set_acknowledged(){
  * @return FAIL an empty string or throw 
  * SUCCESS the char buffer converted to std::string
  */
-std::string Client::receive_message(int fd) {
+void Client::receive_message(int fd, IrcMessage& msg, Server& server) {
 	char buffer[config::BUFFER_SIZE];
-	std::string test;
 	ssize_t bytes_read = 0;
 	memset(buffer, 0, sizeof(buffer));
-
 	bytes_read = recv(fd, buffer, sizeof(buffer) - 1, MSG_DONTWAIT); // last flag makes recv non blocking 
-	test = buffer;
 	if (bytes_read < 0) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK) {
 			std::cout<<"no data to  handle in message receive, skipping"<<std::endl;
-			return "";
+			return ;
 		}
 		perror("recv gailed");
 		// throw error
-		return "";
+		return ;
 	}
 	if (bytes_read == 0) {
 		std::cout<<"cntrl d maybe ???????????????"<<std::endl;
@@ -93,33 +92,38 @@ std::string Client::receive_message(int fd) {
 		throw ServerException(ErrorType::CLIENT_DISCONNECTED, "");
 		//close(fd);
 	}
-	else if (test.find('\n') == std::string::npos)
+	/*else if (test.find('\n') == std::string::npos)
 	{
 		// here we handle cntrl d buffering to string , using netcat
 		// caution as some messages
 		std::cout<<"NEW LINE ENDED THE STRING CNTLR D???"<<std::endl;
-	}
+	}*/
+	//if (buffer[bytes_read] == '\0')
+//		std::cout<<"this was a nul terminated string "<<std::endl;
+
 	// SUCCESS IN READ BUILD CLIENT BUFFER
 	else if (bytes_read > 0) {
 		//dont know yet how to deal with this part 
-		/*	if (buffer.find("PONG")) {
-			std::cout<<" PONG recived server_ping_count = "<<server.get_Client(fd)->get_failed_response_counter()<<std::endl;;
-			//resetClientTimer(server.get_Client(fd)->get_timer_fd(), config::TIMEOUT_CLIENT);
-			//server.get_Client(fd)->set_failed_response_counter(-1);
+		/*if (test.find("PONG")) {
+			std::cout<<" PONG recived server_ping_count = "<<get_failed_response_counter()<<std::endl;;
+			resetClientTimer(_timer_fd, config::TIMEOUT_CLIENT);
+			set_failed_response_counter(-1);
+			return ;
 		}*/
-		// if (client->getbuff.find("\r\n') != std::string::npos) as in found
-		// setreadbuff
-		// if if (client->getbuff.find("\r\n') == std::string::npos) as in not found
-		// resetClientTimer(server.get_Client(fd)->get_timer_fd(), config::TIMEOUT_CLIENT);
-		// server.get_Client(fd)->set_failed_response_counter(-1);
-		// msg.handle_message(server.get_Client(fd), buffer, server);	
-		if (buffer[bytes_read] == '\0')
-			std::cout<<"this was a nul terminated string "<<std::endl;
+		setReadBuff(buffer);
+		if (_read_buff.find("\r\n") != std::string::npos) // as in foundsize_t pos = 
+		{
+			resetClientTimer(_timer_fd, config::TIMEOUT_CLIENT);
+			set_failed_response_counter(-1);
+			//std::string message = _read_buff.substr(0, pos); // because we have multple ŗņ
+			msg.handle_message(*this, _read_buff, server);	
+			// refactor buffer ?? 
+			//_read_buff.erase(0, pos + 2);
+			_read_buff.clear();
+		}
 		else
 			std::cout<<"something has been read and a null added"<<std::endl;
-        buffer[bytes_read] = '\0';
 	}
-	return std::string(buffer);
 }
 
 void Client::setDefaults(int num){

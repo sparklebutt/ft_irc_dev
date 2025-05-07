@@ -206,26 +206,35 @@ Server::~Server(){
 	/*deconstructor*/
 }
 
-void Server::checkTimers(int fd) {
+/**
+ * @brief checks if a timer fd was activated in epoll
+ * updates failed response counter and sends a ping to 
+ * check if there is an active client, if not , the client is removed.  
+ * 
+ * @param fd 
+ * @return true if timer fd was not an active event 
+ * @return false if timer fd was an active event
+ */
+bool Server::checkTimers(int fd) {
 	auto timerit = _timer_map.find(fd);
 	if (timerit == _timer_map.end()) {
-		return ;	
+		return true;
 	}
 	int client_fd = timerit->second;
     auto clientit = _Clients.find(client_fd);
     if (clientit == _Clients.end()) {
-		return;
-	}
+		return false;
+	} // did not find client on the list eek
     if (clientit->second->get_failed_response_counter() == 3) {
         remove_Client(_epoll_fd, client_fd);
         _timer_map.erase(fd);
-        return;
+        return false;
     }
-
     std::cout << "should be sending ping onwards " << std::endl;
     clientit->second->sendPing();
     clientit->second->set_failed_response_counter(1);
     resetClientTimer(timerit->first, config::TIMEOUT_CLIENT);
+	return false;
 }
 
 // definition of illegal nick_names ai
