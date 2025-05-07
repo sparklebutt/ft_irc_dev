@@ -6,26 +6,28 @@
 
 class Server;
 
-class User {
+class Client {
 	private:
 		int _fd;
 		int _timer_fd;
 		int _failed_response_counter = 0;
-		//char buffer[1024];// to recv() too
-		//std::string _ip;
+		std::string _read_buff;
+		std::string _send_buff;
+ 		//std::string _ip;
 		std::string _nickName;
-		std::string _userName;
+		std::string _ClientName;
 		std::string _fullName;
-		//std::string _prefixes; // user permissions 
+
+		//std::string _prefixes; // Client permissions 
 		//int ping_sent; // std::chrono::steady_clock
 		// pointer to current channel object ?
-		// list of channels user is in 
+		// list of channels Client is in 
 
 		bool _acknowledged = false;
 	public:
-		User();
-		User(int fd, int timer_fd);
-		~User();
+		Client();
+		Client(int fd, int timer_fd);
+		~Client();
 		std::string receive_message(int fd);
 		int getFd();
 		int get_failed_response_counter();
@@ -34,7 +36,7 @@ class User {
 		void set_acknowledged();
 		int get_timer_fd();
 		std::string getNickname();
-		std::string getuserName();
+		std::string getClientName();
 		std::string getfullName();
 		void setDefaults(int num);
 
@@ -42,4 +44,7 @@ class User {
 		void sendPong();
 
 		bool change_nickname(std::string nickname, int fd);
+
+		std::string getReadBuff();
+		void setReadBuff(std::string& buffer);
 };

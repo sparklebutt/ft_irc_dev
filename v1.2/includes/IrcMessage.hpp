@@ -2,7 +2,8 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "User.hpp"
+#include "Client.hpp"
+#define  RPL_NICK(oclient, uclient, client) (":" + oclient + "!" + uclient + "@localhost NICK " +  client + "\r\n")
 // Forward declaration (optional but can sometimes help compile times)
 // class std::string; // No, string is included above.
 
@@ -35,5 +36,5 @@ class IrcMessage
 	// araveala has added this to help give you full control
 	// naming is changable
 
-	void handle_message(std::shared_ptr<User> user, const std::string message, Server& server);
+	void handle_message(std::shared_ptr<Client> Client, const std::string message, Server& server);
 };

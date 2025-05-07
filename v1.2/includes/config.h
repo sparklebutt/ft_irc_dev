@@ -38,7 +38,7 @@ enum class ErrorType {
 	EPOLL_FAILURE_1,
 	SOCKET_FAILURE,
 	ACCEPT_FAILURE,
-	NO_USER_INMAP, // next up senderror
+	NO_Client_INMAP, // next up senderror
 	BUFFER_FULL,
 	BAD_FD,
 	BROKEN_PIPE,
@@ -87,7 +87,7 @@ namespace IRCerr {
 
 namespace IRCMessage {
 	inline constexpr const char* error_msg = "ERROR :Server cannot accept connection, closing.\r\n";
-	//inline constexpr const char* welcome_msg = ":server 001 testuser :OK\r\n";
+	//inline constexpr const char* welcome_msg = ":server 001 testClient :OK\r\n";
 	inline constexpr const char* welcome_msg = ":server 001 anon :Welcome to the IRC server\r\n";
 	//":server 005 anon PREFIX=(o)@\r\n"
 	//":server 005 anon NETWORK=myirc\r\n";
@@ -98,11 +98,11 @@ namespace IRCMessage {
 		std::stringstream ss;
         ss << "@ft_irc new nickname is now :" << nickname << "\r\n";
         return ss.str(); }
-	inline constexpr const char* nick_msg = "*:*!user@localhost NICK :helooo\r\n";	
+	inline constexpr const char* nick_msg = "*:*!Client@localhost NICK :helooo\r\n";	
 	//inline constexpr const char* nick_msg = ":NICK :helooo\r\n";
-	//inline constexpr const char* nick_msg = ":*!user@localhost NICK :helooo\r\n";	
+	//inline constexpr const char* nick_msg = ":*!Client@localhost NICK :helooo\r\n";	
 	//inline constexpr const char* nick_msg = "@ft_irc new nickname name is now :nickname\r\n";
-	inline constexpr const char* user_msg = "USER :username 0 * :realname\r\n";
+	inline constexpr const char* Client_msg = "Client :Clientname 0 * :realname\r\n";
 }
 
 /*

@@ -5,7 +5,7 @@
 
 #include "Server.hpp"
 #include "serverUtilities.hpp"
-#include "User.hpp"
+#include "Client.hpp"
 #include "general_utilities.hpp"
 #include "config.h"
 //#include <unistd.h> // close()
@@ -29,7 +29,7 @@
 
 /**
  * @brief This loop functions job is to keep the server running and accepting connections.
- * It will also help manage incoming messages from clients that will be redirected to user class methods 
+ * It will also help manage incoming messages from clients that will be redirected to Client class methods 
  * and from there too message handling class/function. 
  * 
  * @param server the instantiated server object that will be used to manage the server and its data
@@ -80,7 +80,7 @@ int loop(Server &server)
 				}
 				if (fd == server.getFd()) {
 					try {
-						server.create_user(epollfd);
+						server.create_Client(epollfd);
 						std::cout<<server.get_client_count()<<'\n'; // debugging
 					} catch(const ServerException& e)	{
 						server.handle_client_connection_error(e.getType());
@@ -91,22 +91,22 @@ int loop(Server &server)
 					server.checkTimers(fd);
 					try
 					{
-						buffer = server.get_user(fd)->receive_message(fd);
+						buffer = server.get_Client(fd)->receive_message(fd); // add msg object here
 						if (buffer.find("PONG")) {
-							std::cout<<" PONG recived server_ping_count = "<<server.get_user(fd)->get_failed_response_counter()<<std::endl;;
-							//resetClientTimer(server.get_user(fd)->get_timer_fd(), config::TIMEOUT_CLIENT);
-							//server.get_user(fd)->set_failed_response_counter(-1);
+							std::cout<<" PONG recived server_ping_count = "<<server.get_Client(fd)->get_failed_response_counter()<<std::endl;;
+							//resetClientTimer(server.get_Client(fd)->get_timer_fd(), config::TIMEOUT_CLIENT);
+							//server.get_Client(fd)->set_failed_response_counter(-1);
 						}
-						resetClientTimer(server.get_user(fd)->get_timer_fd(), config::TIMEOUT_CLIENT);
-						server.get_user(fd)->set_failed_response_counter(-1);
-						msg.handle_message(server.get_user(fd), buffer, server);	
+						resetClientTimer(server.get_Client(fd)->get_timer_fd(), config::TIMEOUT_CLIENT);
+						server.get_Client(fd)->set_failed_response_counter(-1);
+						msg.handle_message(server.get_Client(fd), buffer, server);	
 					} catch(const ServerException& e) {
 						if (e.getType() == ErrorType::CLIENT_DISCONNECTED)
 						{
-							server.remove_user(epollfd, fd);
+							server.remove_Client(epollfd, fd);
 							std::cout<<server.get_client_count()<<'\n'; // debugging
 						}
-						if (e.getType() == ErrorType::NO_USER_INMAP)
+						if (e.getType() == ErrorType::NO_Client_INMAP)
 							continue ;
 						// here you can catch an error of your choosing if you dont want to catch it in the message handling
 					}	
@@ -123,7 +123,7 @@ int loop(Server &server)
  * We set up server scoket and store required data in server class
  * @attention We set up a test client to test our servers ability to connect to irssi
  * 
- * We create a loop where we read from user socket into a buffer , print that into a log file and /or terminal 
+ * We create a loop where we read from Client socket into a buffer , print that into a log file and /or terminal 
  * so we can see the irc protocol. 
  * set up epoll
  * 
@@ -178,7 +178,7 @@ int main(int argc, char** argv)
 		{
 			/*case ErrorType::CLIENT_DISCONNECTED:
 			{
-				// server.remove_user(epollfd, fd);				
+				// server.remove_Client(epollfd, fd);				
 				std::cerr << e.what() << '\n';
 				break;
 

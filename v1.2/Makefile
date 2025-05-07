@@ -5,7 +5,7 @@ CPPFILES =	${SOURCES}main.cpp \
 			${SOURCES}Server.cpp \
 			${SOURCES}serverUtilities.cpp \
 			${SOURCES}epoll_utills.cpp \
-			${SOURCES}User.cpp \
+			${SOURCES}Client.cpp \
 			${SOURCES}signal_handler.cpp \
 			${SOURCES}IrcMessage.cpp
 			

@@ -7,17 +7,17 @@
 #include <algorithm> // ai For std::transform
 #include <cctype>    // ai For std::tolower, std::islower
 #include <vector>    // ai Just for the initial list concept, set is better for lookup
-//#include "user.hpp" // can this be handled withoout including the whole hpp
+//#include "Client.hpp" // can this be handled withoout including the whole hpp
 
 // connection registration
 // https://modern.ircdocs.horse/#connection-registration
 
 /**
  * @brief The server class manages server related requests and 
- * redirects to client/user, message handling or channel handling when
+ * redirects to client/Client, message handling or channel handling when
  * required.
  * 
- * @note 1. utalizing a map of shared pointers in map of clients/users
+ * @note 1. utalizing a map of shared pointers in map of clients/Clients
  * allows for quick look up of clent and gives potenatial access to other objects
  * such as class for information lookup, such as permissions.
  * shared_pointers also are more memory safe than manual memory management 
@@ -26,7 +26,7 @@
  * @note 2. unordered map is a little faster if we choose to use that  
  *  
  */
-class User;
+class Client;
 class Server {
 	private:
 	int _port;
@@ -36,7 +36,9 @@ class Server {
 		int _signal_fd;
 		int _epoll_fd;
 		std::string _password;
-		std::map<int, std::pair<std::shared_ptr<User>, int >>_users; //unordered map?
+		std::map<int, std::pair<std::shared_ptr<Client>, int >>_Clients; //unordered map?
+		//new
+		//std::map<int, int> _timer_map;
 		// start of new section
 		std::map<std::string, int> nickname_to_fd;
 		std::map<int, std::string> fd_to_nickname;
@@ -72,8 +74,8 @@ class Server {
 		// setters
 		//void set_port(int const port);
 		//void set_password(std::string const password);
-		void create_user(int epollfd);
-		void remove_user(int epollfd, int client_fd);
+		void create_Client(int epollfd);
+		void remove_Client(int epollfd, int client_fd);
 		// remove channel
 	
 		// SETTERS
@@ -97,13 +99,13 @@ class Server {
 		std::string get_password() const;
 		std::string get_nickname(int fd) const;  // ai
 		
-		// returns a user shared_pointer from the map
-		std::shared_ptr<User> get_user(int fd);
+		// returns a Client shared_pointer from the map
+		std::shared_ptr<Client> get_Client(int fd);
 		// returns the whole map 
-		std::map<int, std::pair<std::shared_ptr<User>, int>>& get_map();
+		std::map<int, std::pair<std::shared_ptr<Client>, int>>& get_map();
 		// message handling
 		void handle_client_connection_error(ErrorType err_type);
-		void acknowladgeUser();
+		void acknowladgeClient();
 		void shutdown();
 		void checkTimers(int fd);
 		void remove_fd(int fd);  // ai
@@ -111,12 +113,12 @@ class Server {
 	
 	/**
 	 * @example template <bool ReadOnly>
-	 typename std::conditional<ReadOnly, const std::map<int, std::pair<std::shared_ptr<User>, int>>&, std::map<int, std::pair<std::shared_ptr<User>, int>>&>::type 
+	 typename std::conditional<ReadOnly, const std::map<int, std::pair<std::shared_ptr<Client>, int>>&, std::map<int, std::pair<std::shared_ptr<Client>, int>>&>::type 
 	 Server::get_map() {
-		return _users;
+		return _Clients;
 		}
-		const std::map<int, std::pair<std::shared_ptr<User>, int>>& readonly_users = server.get_map<true>(); // Read only access
-		std::map<int, std::pair<std::shared_ptr<User>, int>>& modifiable_users = server.get_map<false>(); 
+		const std::map<int, std::pair<std::shared_ptr<Client>, int>>& readonly_Clients = server.get_map<true>(); // Read only access
+		std::map<int, std::pair<std::shared_ptr<Client>, int>>& modifiable_Clients = server.get_map<false>(); 
 		
 		this is if we want to create a const return type so that accidental changes can not be made, it would be good practice to 
 learn to do so 

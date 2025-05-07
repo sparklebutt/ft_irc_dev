@@ -6,6 +6,9 @@
 #include <algorithm> // Required for std::find
 #include "epoll_utils.hpp"
 
+#include <unistd.h>
+#include <string.h>
+//#include <>
 // my added libs
 //#include "config.h"
 #include <sys/socket.h>
@@ -77,7 +80,7 @@ bool IrcMessage::parse(const std::string& rawMessage)
         _command = first_token;
     }
 
-    // Command is mandatory		safeSend(user->getFd(), test1);
+    // Command is mandatory		safeSend(Client->getFd(), test1);
 
     if (_command.empty()) {
          // std::cerr << "Error: No command found." << std::endl;
@@ -184,24 +187,25 @@ void IrcMessage::printMessage(const IrcMessage& msg)
 }
 
 
-void IrcMessage::handle_message(std::shared_ptr<User> user, const std::string message, Server& server)
+void IrcMessage::handle_message(std::shared_ptr<Client> Client, const std::string message, Server& server)
 {
 	// Here you can handle the message as needed
 	// For example, you can print it or process it further
-	// you also have access to the user object as provided by main
+	// you also have access to the Client object as provided by main
 	parse(message);
 	if (getCommand() == "NICK"){
 		//const std::string test = msg.getParams();
 		// and nick name not taken yaadiyaa
 		//std::cout<<"prev nick name = #"<< prev_nick<<std::endl;
-		if(server.check_and_set_nickname(getParam(0), user->getFd()))
+		if(server.check_and_set_nickname(getParam(0), Client->getFd()))
 		{
-			std::string prev_nick = user->getNickname();
+			std::string prev_nick = Client->getNickname();
 			//std::cout << "####asdf nickname" << std::endl;
-			user->change_nickname(getParam(0), user->getFd());
-			std::string test1 = ":" + prev_nick + "!user@localhost NICK :" + user->getNickname() + "\r\n";
+			Client->change_nickname(getParam(0), Client->getFd());
+			std::string test1 = ":" + prev_nick + "!Client@localhost NICK :" + Client->getNickname() + "\r\\n";
 			std::cout<<"SHOWING TEST1 = ["<<test1<<"]\n";
-			send(user->getFd(), test1.c_str(), test1.length(), 0);
+			//char *test2 = RPL_NICK(prev_nick, "@localhost", Client->getNickname());
+			send(Client->getFd(), test1.c_str(), test1.length(), 0);
 		}
 		else
 		{
@@ -209,41 +213,41 @@ void IrcMessage::handle_message(std::shared_ptr<User> user, const std::string me
 			//std::string arg = IRCerr::ERR_NICKNAMEINUSE;
 			std::string test2 = ":localhost 433 "  + getParam(0) + " :Nickname is already in use" + "\r\n";
 			//std::cout<<"test 2 = ["<<test2<<"]"<<std::endl;
-            send(user->getFd(), test2.c_str(), test2.length(), 0); // todo what is correct format to send error code
+            send(Client->getFd(), test2.c_str(), test2.length(), 0); // todo what is correct format to send error code
 		}
 		// SEND ERROR CODE
-        //    send(user->getFd(), to_string(IRCerr::ERR_NICKNAMEINUSE), // todo what is correct format to send error code
+        //    send(Client->getFd(), to_string(IRCerr::ERR_NICKNAMEINUSE), // todo what is correct format to send error code
 
 
-//		send(user->getFd(), ":anon!user@localhost NICK :newtuser\r\n", 43, 0);
+//		send(Client->getFd(), ":anon!Client@localhost NICK :newtClient\r\n", 43, 0);
         // todo check nick against list
-        // todo map of usernames
-        // user creation - add name to list in server
-        // user deletion - remove name from list in server
+        // todo map of Clientnames
+        // Client creation - add name to list in server
+        // Client deletion - remove name from list in server
 
 	}
 	if (getCommand() == "PING"){
-		user->sendPong();
+		Client->sendPong();
 		std::cout<<"sending pong back "<<std::endl;
-		//user->set_failed_response_counter(-1);
-		//resetClientTimer(user->get_timer_fd(), config::TIMEOUT_CLIENT);
-		//resetClientTimer(user->get_timer_fd(), config::TIMEOUT_CLIENT);
+		//Client->set_failed_response_counter(-1);
+		//resetClientTimer(Client->get_timer_fd(), config::TIMEOUT_CLIENT);
+		//resetClientTimer(Client->get_timer_fd(), config::TIMEOUT_CLIENT);
 	}
 	if (getCommand() == "PONG"){
 		std::cout<<"------------------- we recived pong inside message handling haloooooooooo"<<std::endl;
 	}
 
 	printMessage(*this);
-//	std::cout << "Handling message for user (fd: " << user->getFd() << "): " << message << std::endl;
+//	std::cout << "Handling message for Client (fd: " << Client->getFd() << "): " << message << std::endl;
 }
-		/*std::string test1 = ":"+ prev_nick +"!user@localhost NICK :" + user->getNickname() + "\r\n";
+		/*std::string test1 = ":"+ prev_nick +"!Client@localhost NICK :" + Client->getNickname() + "\r\n";
 		try
 		{
-			safeSend(user->getFd(), ":"+ prev_nick +"!user@localhost NICK :" + user->getNickname() + "\r\n");			
+			safeSend(Client->getFd(), ":"+ prev_nick +"!Client@localhost NICK :" + Client->getNickname() + "\r\n");			
 		}
 		catch(const std::exception& e)
 		{
 			std::cerr << e.what() << '\n';
 		}*/
 		
-		//send(user->getFd(), test1.c_str(), test1.length(), 0);
+		//send(Client->getFd(), test1.c_str(), test1.length(), 0);
