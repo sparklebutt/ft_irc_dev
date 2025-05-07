@@ -36,9 +36,10 @@ class Server {
 		int _signal_fd;
 		int _epoll_fd;
 		std::string _password;
-		std::map<int, std::pair<std::shared_ptr<Client>, int >>_Clients; //unordered map?
+		//std::map<int, std::pair<std::shared_ptr<Client>, int >>_Clients; //unordered map?
 		//new
-		//std::map<int, int> _timer_map;
+		std::map<int, std::shared_ptr<Client>> _Clients;
+		std::map<int, int> _timer_map;
 		// start of new section
 		std::map<std::string, int> nickname_to_fd;
 		std::map<int, std::string> fd_to_nickname;
@@ -102,7 +103,7 @@ class Server {
 		// returns a Client shared_pointer from the map
 		std::shared_ptr<Client> get_Client(int fd);
 		// returns the whole map 
-		std::map<int, std::pair<std::shared_ptr<Client>, int>>& get_map();
+		std::map<int, std::shared_ptr<Client>>& get_map();
 		// message handling
 		void handle_client_connection_error(ErrorType err_type);
 		void acknowladgeClient();

@@ -88,24 +88,35 @@ void Server::create_Client(int epollfd) {
 		int timer_fd = setup_epoll_timer(epollfd, config::TIMEOUT_CLIENT);
 		// errro handling if timer_fd failed
 		// create an instance of new Client and add to server map
-		_Clients[client_fd] = {std::make_shared<Client>(client_fd, timer_fd), timer_fd};
-		std::cout << "New Client created , fd value is  == " << _Clients[client_fd].first->getFd() << std::endl;
+		_Clients[client_fd] = std::make_shared<Client>(client_fd, timer_fd);//{std::make_shared<Client>(client_fd, timer_fd), timer_fd};
+		_timer_map[timer_fd] = client_fd;
+		std::cout << "New Client created , fd value is  == " << _Clients[client_fd]->getFd() << std::endl;
 
 // WELCOME MESSAGE
 		set_current_client_in_progress(client_fd);
 
-		if (!_Clients[client_fd].first->get_acknowledged()){
+		if (!_Clients[client_fd]->get_acknowledged()){
 			// send message back so server dosnt think we are dead
 			send(client_fd, IRCMessage::welcome_msg, strlen(IRCMessage::welcome_msg), 0);
-			_Clients[client_fd].first->set_acknowledged();
+			_Clients[client_fd]->set_acknowledged();
 		}
 
 		set_client_count(1);
 		
-		_Clients[client_fd].first->setDefaults(get_client_count());
+		_Clients[client_fd]->setDefaults(get_client_count());
 	}
 }
 
+/**
+ * @brief removing a singular client
+ * 
+ * 
+ * @param epollfd 
+ * @param client_fd 
+ * 
+ * @note we are calling get client multple times here , we could try to work past that 
+ * by just sending in the client once as a param
+ */
 void Server::remove_Client(int epollfd, int client_fd) {
 	close(client_fd);
 	epoll_ctl(epollfd, EPOLL_CTL_DEL, client_fd, 0);
@@ -125,14 +136,14 @@ void Server::remove_Client(int epollfd, int client_fd) {
  * @return Client* , shared pointers are a refrence themselves
  */
 std::shared_ptr<Client> Server::get_Client(int fd) {
-	for (std::map<int, std::pair<std::shared_ptr<Client>, int>>::iterator it = _Clients.begin(); it != _Clients.end(); it++) {
+	for (std::map<int, std::shared_ptr<Client>>::iterator it = _Clients.begin(); it != _Clients.end(); it++) {
 		if (it->first == fd)
-			return it->second.first;
+			return it->second;
 	}
 	throw ServerException(ErrorType::NO_Client_INMAP, "can not get_Client()");
 }
 
-std::map<int, std::pair<std::shared_ptr<Client>, int>>& Server::get_map() {
+std::map<int, std::shared_ptr<Client>>& Server::get_map() {
 	return _Clients;
 }
 
@@ -163,9 +174,12 @@ void Server::handle_client_connection_error(ErrorType err_type) {
 
 void Server::shutdown() {
 	// close all sockets
-	for (std::map<int, std::pair<std::shared_ptr<Client>, int>>::iterator it = _Clients.begin(); it != _Clients.end(); it++){
+	for (std::map<int, std::shared_ptr<Client>>::iterator it = _Clients.begin(); it != _Clients.end(); it++){
 		close(it->first);
-		close(it->second.second); // it->second refers to the pair , and second second refers to the second memebre of the pair
+	}
+	for (std::map<int, int>::iterator timerit = _timer_map.begin(); timerit != _timer_map.end(); timerit++)
+	{
+		close(timerit->first);
 	}
 	// close server socket
 	close(_fd);
@@ -174,9 +188,10 @@ void Server::shutdown() {
 	// close epoll fd
 	// close(_epoll_fd);
 	// delete Clients
-	for (std::map<int, std::pair<std::shared_ptr<Client>, int>>::iterator it = _Clients.begin(); it != _Clients.end(); it++){
-		it->second.first.reset();
+	for (std::map<int, std::shared_ptr<Client>>::iterator it = _Clients.begin(); it != _Clients.end(); it++){
+		it->second.reset();
 	}
+	_timer_map.clear();
 	_Clients.clear();
 	// delete channels
 
@@ -192,23 +207,25 @@ Server::~Server(){
 }
 
 void Server::checkTimers(int fd) {
-	// Using a lambda function to look for corresponding timer_fd
-	auto it = std::find_if(_Clients.begin(), _Clients.end(), 
-	[fd](const auto& pair) { return pair.second.second == fd; } );
-
-	if (it == _Clients.end())
-		return;
-	if (it != _Clients.end()) {
-		if (it->second.first->get_failed_response_counter() == 3){
-			remove_Client(_epoll_fd, it->first);
-			return ;
-			//it->second.first
-		}
-		std::cout << "should be sending ping onwards " << std::endl;
-		it->second.first->sendPing();
-		it->second.first->set_failed_response_counter(1);
-		resetClientTimer(it->second.second, config::TIMEOUT_CLIENT);
+	auto timerit = _timer_map.find(fd);
+	if (timerit == _timer_map.end()) {
+		return ;	
 	}
+	int client_fd = timerit->second;
+    auto clientit = _Clients.find(client_fd);
+    if (clientit == _Clients.end()) {
+		return;
+	}
+    if (clientit->second->get_failed_response_counter() == 3) {
+        remove_Client(_epoll_fd, client_fd);
+        _timer_map.erase(fd);
+        return;
+    }
+
+    std::cout << "should be sending ping onwards " << std::endl;
+    clientit->second->sendPing();
+    clientit->second->set_failed_response_counter(1);
+    resetClientTimer(timerit->first, config::TIMEOUT_CLIENT);
 }
 
 // definition of illegal nick_names ai
