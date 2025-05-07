@@ -72,11 +72,12 @@ void Client::set_acknowledged(){
  * @return FAIL an empty string or throw 
  * SUCCESS the char buffer converted to std::string
  */
-void Client::receive_message(int fd, IrcMessage& msg, Server& server) {
+void Client::receive_message(int fd, Server& server) {
 	char buffer[config::BUFFER_SIZE];
 	ssize_t bytes_read = 0;
 	memset(buffer, 0, sizeof(buffer));
-	bytes_read = recv(fd, buffer, sizeof(buffer) - 1, MSG_DONTWAIT); // last flag makes recv non blocking 
+	IrcMessage msg;
+	bytes_read = recv(fd, buffer, sizeof(buffer) , MSG_DONTWAIT); // last flag makes recv non blocking 
 	if (bytes_read < 0) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK) {
 			std::cout<<"no data to  handle in message receive, skipping"<<std::endl;
@@ -110,10 +111,14 @@ void Client::receive_message(int fd, IrcMessage& msg, Server& server) {
 			set_failed_response_counter(-1);
 			return ;
 		}*/
+		std::cout << "Received raw buffer: [" << _read_buff << "]\n";
+
 		setReadBuff(buffer);
+		std::cout << "Received raw buffer: [" << _read_buff << "]\n";
+
 		if (_read_buff.find("\r\n") != std::string::npos) // as in foundsize_t pos = 
 		{
-			resetClientTimer(_timer_fd, config::TIMEOUT_CLIENT);
+			//resetClientTimer(_timer_fd, config::TIMEOUT_CLIENT);
 			set_failed_response_counter(-1);
 			//std::string message = _read_buff.substr(0, pos); // because we have multple ŗņ
 			msg.handle_message(*this, _read_buff, server);	

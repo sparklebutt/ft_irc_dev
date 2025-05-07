@@ -84,11 +84,13 @@ void Server::create_Client(int epollfd) {
 		throw ServerException(ErrorType::ACCEPT_FAILURE, "debuggin: create Client");
 	} else {
  		make_socket_unblocking(client_fd);
+		int flag = 1;
+		setsockopt(client_fd, SOL_SOCKET, SO_KEEPALIVE, &flag, sizeof(flag)); 
 		setup_epoll(epollfd, client_fd, EPOLLIN);
 		int timer_fd = setup_epoll_timer(epollfd, config::TIMEOUT_CLIENT);
 		// errro handling if timer_fd failed
 		// create an instance of new Client and add to server map
-		_Clients[client_fd] = std::make_shared<Client>(client_fd, timer_fd);//{std::make_shared<Client>(client_fd, timer_fd), timer_fd};
+		_Clients[client_fd] = std::make_shared<Client>(client_fd, timer_fd);
 		_timer_map[timer_fd] = client_fd;
 		std::cout << "New Client created , fd value is  == " << _Clients[client_fd]->getFd() << std::endl;
 
@@ -143,8 +145,13 @@ std::shared_ptr<Client> Server::get_Client(int fd) {
 	throw ServerException(ErrorType::NO_Client_INMAP, "can not get_Client()");
 }
 
+
 std::map<int, std::shared_ptr<Client>>& Server::get_map() {
 	return _Clients;
+}
+
+std::map<int, std::string>& Server::get_fd_to_nickname() {
+	return fd_to_nickname;
 }
 
 std::string Server::get_password() const {

@@ -50,7 +50,7 @@ int loop(Server &server)
 	server.set_signal_fd(signal_mask());
 	setup_epoll(epollfd, server.get_signal_fd(), EPOLLIN);
 	struct epoll_event events[config::MAX_CLIENTS];
-	IrcMessage msg;
+	//IrcMessage msg;
 	// instance of message class 
 	while (true)
 	{
@@ -92,7 +92,7 @@ int loop(Server &server)
 					{
 							try
 							{
-								server.get_Client(fd)->receive_message(fd, msg, server); // add msg object here
+								server.get_Client(fd)->receive_message(fd, server); // add msg object here
 							} catch(const ServerException& e) {
 								if (e.getType() == ErrorType::CLIENT_DISCONNECTED)
 								{

@@ -193,19 +193,36 @@ void IrcMessage::handle_message(Client& Client, const std::string message, Serve
 	// For example, you can print it or process it further
 	// you also have access to the Client object as provided by main
 	parse(message);
+	// client_fd = Client.getFd();
 	if (getCommand() == "NICK"){
 		//const std::string test = msg.getParams();
-		// and nick name not taken yaadiyaa
-		//std::cout<<"prev nick name = #"<< prev_nick<<std::endl;
 		if(server.check_and_set_nickname(getParam(0), Client.getFd()))
 		{
 			std::string prev_nick = Client.getNickname();
-			//std::cout << "####asdf nickname" << std::endl;
 			Client.change_nickname(getParam(0), Client.getFd());
 			std::string test1 = ":" + prev_nick + "!Client@localhost NICK :" + Client.getNickname() + "\r\n";
 			std::cout<<"SHOWING TEST1 = ["<<test1<<"]\n";
 			//char *test2 = RPL_NICK(prev_nick, "@localhost", Client->getNickname());
 			send(Client.getFd(), test1.c_str(), test1.length(), 0);
+			//auto it = server.get_map();
+			//std::map store <int, std::string> = server.get_fd_to_nickname();
+			for (auto& pair : server.get_map())
+			{
+				//if (client_fd != pair.first)
+				send(pair.first, test1.c_str(), test1.length(), 0);
+			}
+
+			// try to force cache update on irssi
+
+			//std::string fakeQuit = ":" + Client.getNickname() + " QUIT :Forced Nick Refresh\r\n";
+			//send(Client.getFd(), fakeQuit.c_str(), fakeQuit.length(), 0);
+
+			//std::string forceWhois = ":server WHOIS " + Client.getNickname() + "\r\n";
+			//send(Client.getFd(), forceWhois.c_str(), forceWhois.length(), 0);
+
+			//std::string userUpdate = "USER " + Client.getNickname() + " 0 * :Updated User\r\n";
+			//send(Client.getFd(), userUpdate.c_str(), userUpdate.length(), 0);
+
 		}
 		else
 		{

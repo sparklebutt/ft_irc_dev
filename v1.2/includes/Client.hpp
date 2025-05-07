@@ -2,7 +2,7 @@
 #include <string>
 // https://modern.ircdocs.horse/#client-to-server-protocol-structure
 // Names of IRC entities (clients, servers, channels) are casemapped
-
+//#include "IrcMessage.hpp"
 class Server;
 class IrcMessage;
 
@@ -17,7 +17,7 @@ class Client {
 		std::string _nickName;
 		std::string _ClientName;
 		std::string _fullName;
-
+		//IrcMessage _msg;
 		//std::string _prefixes; // Client permissions 
 		//int ping_sent; // std::chrono::steady_clock
 		// pointer to current channel object ?
@@ -26,9 +26,9 @@ class Client {
 		bool _acknowledged = false;
 	public:
 		Client();
-		Client(int fd, int timer_fd);
+		Client(int fd, int timerfd);
 		~Client();
-		void receive_message(int fd, IrcMessage& msg, Server& server);
+		void receive_message(int fd, Server& server);
 		int getFd();
 		int get_failed_response_counter();
 		void set_failed_response_counter(int count);

@@ -104,6 +104,7 @@ class Server {
 		std::shared_ptr<Client> get_Client(int fd);
 		// returns the whole map 
 		std::map<int, std::shared_ptr<Client>>& get_map();
+		std::map<int, std::string>& get_fd_to_nickname();
 		// message handling
 		void handle_client_connection_error(ErrorType err_type);
 		void acknowladgeClient();
