@@ -86,7 +86,7 @@ void Server::create_Client(int epollfd) {
  		make_socket_unblocking(client_fd);
 		int flag = 1;
 		setsockopt(client_fd, SOL_SOCKET, SO_KEEPALIVE, &flag, sizeof(flag)); 
-		setup_epoll(epollfd, client_fd, EPOLLIN);
+		setup_epoll(epollfd, client_fd, EPOLLIN); // | EPOLLET); // | EPOLLOUT);
 		int timer_fd = setup_epoll_timer(epollfd, config::TIMEOUT_CLIENT);
 		// errro handling if timer_fd failed
 		// create an instance of new Client and add to server map
