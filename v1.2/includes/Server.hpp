@@ -60,15 +60,10 @@ class Server {
 		std::map<std::string, int> _nickname_to_fd;
 		std::map<int, std::string> _fd_to_nickname;
 		
-		static const std::set<std::string> _illegal_nicknames;
-		
-		
+
 		// Using std::map for nicknames; use std::unordered_map if preferred
 		// #include <unordered_map>
 		
-	
-
-
 	public:
 		Server();
 		Server(int port, std::string password);
@@ -80,10 +75,7 @@ class Server {
 		void create_user(int epollfd);
 		void remove_user(int epollfd, int client_fd);
 		// remove channel
-
-
-		
-		
+	
 		// SETTERS
 		void setFd(int fd);
 		void set_signal_fd(int fd);
