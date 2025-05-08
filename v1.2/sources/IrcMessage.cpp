@@ -6,6 +6,7 @@
 #include <algorithm> // Required for std::find
 #include "epoll_utils.hpp"
 
+#include "IrcResources.hpp"
 #include <unistd.h>
 #include <string.h>
 //#include <>
@@ -186,67 +187,33 @@ void IrcMessage::printMessage(const IrcMessage& msg)
     std::cout << "---" << std::endl; // Separator for messages
 }
 
-
-void IrcMessage::handle_message(Client& Client, const std::string message, Server& server) //std::shared_ptr<Client> Client,
+/**
+ * @brief this functions task is to find what command we have been sent and to deligate the
+ * handling of that command to respective functions
+ * 
+ * @param Client 
+ * @param message 
+ * @param server 
+ */
+void IrcMessage::handle_message(Client& Client, const std::string message, Server& server)
 {
-	// Here you can handle the message as needed
-	// For example, you can print it or process it further
-	// you also have access to the Client object as provided by main
 	parse(message);
 	int client_fd = Client.getFd();
 	if (getCommand() == "NICK"){
-		//const std::string test = msg.getParams();
-		//int flag = 1; // what other values we have fior flushing socket? 
-
 		if(server.check_and_set_nickname(getParam(0), Client.getFd()))
 		{
-			std::string prev_nick = Client.getNickname();
+			// store previouse nick name so we can tell irssi who we where
+			std::string oldnick = Client.getNickname();
 			Client.change_nickname(getParam(0), Client.getFd());
-			std::string test1 = ":" + prev_nick + "!Client@localhost NICK :" + Client.getNickname() + "\r\n";
-			std::cout<<"SHOWING TEST1 = ["<<test1<<"]\n";
-			std::string test2 = ":server NOTICE * :User " + prev_nick + " changed nickname to " + Client.getNickname() + "\r\n";//":server 001 " + Client.getNickname() + " :Nickname change confirmed\r\n";
-			//char *test2 = RPL_NICK(prev_nick, "@localhost", Client->getNickname());
-			//send(Client.getFd(), test1.c_str(), test1.length(), 0);
-			// irrsi must be preped for incoming message
-
-			for (auto& pair : server.get_map()) {
-				std::cout<<"checking fd value = "<<pair.first<<"\n";
-				if (pair.first == client_fd)
-					send(pair.first, test1.c_str(), test1.length(), 0);
-				else
-					send(pair.first, test2.c_str(), test2.length(), 0);
-
-				//setsockopt(pair.first, SOL_SOCKET, SO_KEEPALIVE, &flag, sizeof(flag));
-
-			}
-			
-			//Client.sendPing();
-
-			// try to force cache update on irssi
-
-			//std::string fakeQuit = ":" + Client.getNickname() + " QUIT :Forced Nick Refresh\r\n";
-			//send(Client.getFd(), fakeQuit.c_str(), fakeQuit.length(), 0);
-
-			//std::string forceWhois = ":server WHOIS " + Client.getNickname() + "\r\n";
-			//send(Client.getFd(), forceWhois.c_str(), forceWhois.length(), 0);
-
-			//std::string userUpdate = "USER " + Client.getNickname() + " 0 * :Updated User\r\n";
-			//send(Client.getFd(), userUpdate.c_str(), userUpdate.length(), 0);
-
+			dispatch_nickname(client_fd, oldnick, Client.getNickname(), server.get_map());
 		}
 		else
 		{
-			//std::cout<<"else statement triggered for NICK"<<std::endl;
-			//std::string arg = IRCerr::ERR_NICKNAMEINUSE;
-			std::string test2 = ":localhost 433 "  + getParam(0) + " :Nickname is already in use" + "\r\n";
-			//std::cout<<"test 2 = ["<<test2<<"]"<<std::endl;
+			// error codes for handlinh error messages or they should be handled in check and set . 
+			std::string test2 = ":localhost 433 "  + getParam(0) + " " + getParam(0) + "\r\n";
             send(Client.getFd(), test2.c_str(), test2.length(), 0); // todo what is correct format to send error code
 		}
-		// SEND ERROR CODE
-        //    send(Client->getFd(), to_string(IRCerr::ERR_NICKNAMEINUSE), // todo what is correct format to send error code
 
-
-//		send(Client->getFd(), ":anon!Client@localhost NICK :newtClient\r\n", 43, 0);
         // todo check nick against list
         // todo map of Clientnames
         // Client creation - add name to list in server
@@ -258,23 +225,10 @@ void IrcMessage::handle_message(Client& Client, const std::string message, Serve
 		std::cout<<"sending pong back "<<std::endl;
 		//Client->set_failed_response_counter(-1);
 		//resetClientTimer(Client->get_timer_fd(), config::TIMEOUT_CLIENT);
-		//resetClientTimer(Client->get_timer_fd(), config::TIMEOUT_CLIENT);
 	}
 	if (getCommand() == "PONG"){
 		std::cout<<"------------------- we recived pong inside message handling haloooooooooo"<<std::endl;
 	}
 
 	printMessage(*this);
-//	std::cout << "Handling message for Client (fd: " << Client->getFd() << "): " << message << std::endl;
 }
-		/*std::string test1 = ":"+ prev_nick +"!Client@localhost NICK :" + Client->getNickname() + "\r\n";
-		try
-		{
-			safeSend(Client->getFd(), ":"+ prev_nick +"!Client@localhost NICK :" + Client->getNickname() + "\r\n");
-		}
-		catch(const std::exception& e)
-		{
-			std::cerr << e.what() << '\n';
-		}*/
-
-		//send(Client->getFd(), test1.c_str(), test1.length(), 0);

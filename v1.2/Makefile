@@ -7,7 +7,8 @@ CPPFILES =	${SOURCES}main.cpp \
 			${SOURCES}epoll_utills.cpp \
 			${SOURCES}Client.cpp \
 			${SOURCES}signal_handler.cpp \
-			${SOURCES}IrcMessage.cpp
+			${SOURCES}IrcMessage.cpp \
+			${SOURCES}IrcDispatcher.cpp \
 			
 INCLUDES = -I ./includes
 CPP = c++

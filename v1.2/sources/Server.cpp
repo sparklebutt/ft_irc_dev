@@ -13,7 +13,7 @@
 #include "ServerError.hpp"
 //#include "SendException.hpp"
 #include <algorithm> // find_if
-#include <optional> // nullopt , signifies absence
+//#include <optional> // nullopt , signifies absence
 class ServerException;
 
 Server::Server(){
@@ -249,6 +249,7 @@ const std::set<std::string> Server::_illegal_nicknames = {
     "ping", "pong", "server", "root", "nick", "services", "god"
 };
 
+// we should enum values or alike or we can just send the correct error message straight from here ?
 // check_and_set_nickname definition
 bool Server::check_and_set_nickname(std::string nickname, int fd) {
 
@@ -266,7 +267,7 @@ bool Server::check_and_set_nickname(std::string nickname, int fd) {
          }
     }
 
-    std::string processed_nickname = nickname; // TODO do we need this allocation?
+    std::string processed_nickname = nickname; // TODO do we need this allocation? no i dont think so 
 
     // 2. check legality
     if (_illegal_nicknames.count(processed_nickname) > 0) {
@@ -275,10 +276,12 @@ bool Server::check_and_set_nickname(std::string nickname, int fd) {
     }
 
     // check if nickname exists for anyone
-    auto nick_it = nickname_to_fd.find(processed_nickname);
-
-    if (nick_it != nickname_to_fd.end()) {
+    auto nick_it = _nickname_to_fd.find(processed_nickname);
+	std::cout<<"nickname = "<<nickname<<" ____________________________________________"<<"\n";
+	std::cout<<"proccessed nickname "<<processed_nickname<<"____________________________________________"<<"\n";
+	if (nick_it != _nickname_to_fd.end()) {
         // Nickname exists. Is it the same Client trying to set their current nick?
+		std::cout<<"we should be looping here ____________________________________________"<<"\n";
         if (nick_it->second == fd) {
             // FD already head requested nickname.
             std::cout << "#### Nickname '" << nickname << "' for fd " << fd << ": Already set. No change needed." << std::endl;
@@ -291,9 +294,9 @@ bool Server::check_and_set_nickname(std::string nickname, int fd) {
     }
 
     // Check if the FD has an old nickname with an iterator
-    auto fd_it = fd_to_nickname.find(fd);
+    auto fd_it = _fd_to_nickname.find(fd);
 
-    if (fd_it != fd_to_nickname.end()){
+    if (fd_it != _fd_to_nickname.end()){
         // This FD already has a nickname. We need to remove the old one from both maps.
 		// find out nickname
         std::string old_nickname = fd_it->second;
@@ -301,10 +304,10 @@ bool Server::check_and_set_nickname(std::string nickname, int fd) {
 
         // Remove the old nickname -> fd entry using the old nickname as key
         // Use erase(key) which is safe even if the key somehow wasn't found
-        nickname_to_fd.erase(old_nickname);
+        _nickname_to_fd.erase(old_nickname);
 
         // Remove the old fd -> nickname entry using the iterator we already have
-        fd_to_nickname.erase(fd_it);
+        _fd_to_nickname.erase(fd_it);
 
         std::cout << "#### Removed old nickname '" << old_nickname << "' for fd " << fd << "." << std::endl;
 
