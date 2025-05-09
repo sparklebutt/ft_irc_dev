@@ -118,7 +118,7 @@ int Server::createTimerFD(int timeout_seconds) {
     if (timer_fd == -1)
         throw std::runtime_error("Failed to create timer FD");
 
-    struct itimerspec timer_value;
+    struct itimerspec timer_value = {};
     timer_value.it_value.tv_sec = timeout_seconds;  //First timeout duration
     timer_value.it_value.tv_nsec = 0;
     timer_value.it_interval.tv_sec = 0;  //One-shot timeout (resets manually)
@@ -132,7 +132,7 @@ int Server::createTimerFD(int timeout_seconds) {
 void Server::resetClientTimer(int timer_fd, int timeout_seconds) {
     //std::cout<<"timer should be reseting checking seconds to set"<<config::TIMEOUT_CLIENT<<std::endl;
 	//grab the correct fd
-	struct itimerspec timer_value;
+	struct itimerspec timer_value = {};
 	timer_value.it_value.tv_sec = timeout_seconds;
     timer_value.it_value.tv_nsec = 0;
     timerfd_settime(timer_fd, 0, &timer_value, NULL);  //resets timeout

@@ -3,6 +3,8 @@
 #include <sys/signalfd.h>
 #include "Server.hpp"
 #include "config.h"
+
+int should_exit = 0;
 sigset_t sigmask;
 // rename file to signals / handle signals?
 //may not need anymore
@@ -28,10 +30,10 @@ void handle_signal(int signum)
 {
 	if (signum == SIGINT)// || signum == SIGTERM)
 	{
-		Global::server->shutdown();
+		should_exit = 1;
 		std::cout<<"signal handler called"<<std::endl;
-		exit(0); // clean up required here 
-	}	
+	}
+	
 }
 /**
  * @brief Set the up signal handler utalizing the sigaction struct that 
