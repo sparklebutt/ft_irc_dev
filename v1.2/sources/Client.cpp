@@ -28,10 +28,13 @@ int Client::get_failed_response_counter(){
 	return _failed_response_counter;
 }
 
+// specifically adds a specific amount, not increment by 1
 void Client::set_failed_response_counter(int count){
 	std::cout<<"failed response counter is "
-	<< _failed_response_counter << "new value to be added "
-	<< count <<std::endl;
+				<< _failed_response_counter
+				<<"new value to be added "
+				<< count
+				<<std::endl;
 	if ( count < 0 && _failed_response_counter == 0)
 		return ;	
 	_failed_response_counter += count;
@@ -78,6 +81,7 @@ void Client::receive_message(int fd, Server& server) {
 	memset(buffer, 0, sizeof(buffer));
 	IrcMessage msg;
 	bytes_read = recv(fd, buffer, sizeof(buffer) , MSG_DONTWAIT); // last flag makes recv non blocking 
+	// check if recv returns less than zero, meaning 
 	if (bytes_read < 0) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK) {
 			std::cout<<"no data to  handle in message receive, skipping"<<std::endl;
