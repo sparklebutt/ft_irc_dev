@@ -2,13 +2,16 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "Client.hpp"
 #include <map>
+#include <deque> 
 //#define  RPL_NICK(oclient, uclient, client) (":" + oclient + "!" + uclient + "@localhost NICK " +  client + "\r\n")
 // Forward declaration (optional but can sometimes help compile times)
 // class std::string; // No, string is included above.
 
 // RFC 2812
+
+class Client; // Forward declaration
+class Server;
 
 class IrcMessage
 {
@@ -17,7 +20,7 @@ class IrcMessage
     	std::string _prefix;
     	std::string _command;
     	std::vector<std::string> _paramsList;
-
+		std::deque<std::string> _messageQue;
 	public:
     	IrcMessage();
     	~IrcMessage();
@@ -34,9 +37,16 @@ class IrcMessage
 		void printMessage(const IrcMessage& msg);
 
 
+		
 	// araveala has added this to help give you full control
 	// naming is changable
+		// these are now required as subject requires all activity including read and write
+		// must go through epoll
+		void queueMessage(const std::string& msg) { _messageQue.push_back(msg);};
+		void removeQueueMessage() { _messageQue.pop_front();};
+		std::deque<std::string>& getQue() { return _messageQue; };
+		std::string getQueueMessage() { return _messageQue.front();};
 
-	void handle_message(Client& Client, const std::string message, Server& server);
-	void dispatch_nickname(int client_fd, const std::string& oldnick, std::string newnickname, std::map<int, std::shared_ptr <Client>>& clientsMap);
+		void handle_message(Client& Client, const std::string message, Server& server);
+		void dispatch_nickname(int client_fd, const std::string& oldnick, std::string newnickname, std::map<int, std::shared_ptr <Client>>& clientsMap);
 };

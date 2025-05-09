@@ -34,3 +34,4 @@ int create_epollfd(Server &server);
 int createTimerFD(int timeout_seconds);
 void resetClientTimer(int timer_fd, int timeout_seconds);
 int setup_epoll_timer(int epoll_fd, int timeout_seconds);
+void readyEpollout(int client_fd, int epoll_fd);

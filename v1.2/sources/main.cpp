@@ -45,13 +45,11 @@
 int loop(Server &server)
 {
 	int epollfd = 0;
-	epollfd = create_epollfd(server);	
+	epollfd = server.create_epollfd();	
 
 	server.set_signal_fd(signal_mask());
-	setup_epoll(epollfd, server.get_signal_fd(), EPOLLIN);
+	server.setup_epoll(epollfd, server.get_signal_fd(), EPOLLIN);
 	struct epoll_event events[config::MAX_CLIENTS];
-	//IrcMessage msg;
-	// instance of message class 
 	while (true)
 	{
 		// from epoll fd, in events struct this has niche error handling 
@@ -66,8 +64,16 @@ int loop(Server &server)
 		// if nfds == -1 we have perro we should be able to print with perror.
 		for (int i = 0; i < nfds; i++)
 		{
+			std::cout << "EPOLL event for FD " << events[i].data.fd << ": "
+          << ((events[i].events & EPOLLIN) ? " READ " : "")
+          << ((events[i].events & EPOLLOUT) ? " WRITE " : "")
+          << ((events[i].events & EPOLLHUP) ? " HUP " : "")
+          << ((events[i].events & EPOLLERR) ? " ERROR " : "")
+          << std::endl;
+
 			if (events[i].events & EPOLLIN) {
                 int fd = events[i].data.fd; // Get the associated file descriptor
+				
 				if (fd == server.get_signal_fd()) { 
 					struct signalfd_siginfo si;
 					read(server.get_signal_fd(), &si, sizeof(si));
@@ -90,22 +96,80 @@ int loop(Server &server)
 					bool read_to_buffer = server.checkTimers(fd);
 					if (read_to_buffer == true)
 					{
-							try
-							{
-								server.get_Client(fd)->receive_message(fd, server); // add msg object here
-							} catch(const ServerException& e) {
-								if (e.getType() == ErrorType::CLIENT_DISCONNECTED)
-								{
-									server.remove_Client(epollfd, fd);
-									std::cout<<server.get_client_count()<<'\n'; // debugging
-								}
-								if (e.getType() == ErrorType::NO_Client_INMAP)
-									continue ;
-								// here you can catch an error of your choosing if you dont want to catch it in the message handling
-							}	
+						try {
+							//std::cout<<" reciveing message\n";
+							server.get_Client(fd)->receive_message(fd, server); // add msg object here
+							//std::cout<<" message recived\n";
+
+							//if (server.get_Client(fd)->isMsgEmpty())
+							//readyEpollout(fd, server.getFd());
+							std::cout<<"after ecive message ";
+							for (const auto& [fd, ev] : server.get_struct_map()) {
+								std::cout << "FD " << fd << " → Events: "
+										<< ((ev.events & EPOLLIN) ? " READ " : "")
+										<< ((ev.events & EPOLLOUT) ? " WRITE " : "")
+										<< ((ev.events & EPOLLERR) ? " ERROR " : "")
+										<< std::endl;
+							}
+						} catch(const ServerException& e) {
+							if (e.getType() == ErrorType::CLIENT_DISCONNECTED) {
+								server.remove_Client(epollfd, fd);
+								std::cout<<server.get_client_count()<<"debuggin :: this is the new client count <<<<\n"; // debugging
+							}
+							if (e.getType() == ErrorType::NO_Client_INMAP)
+								continue ;
+							// here you can catch an error of your choosing if you dont want to catch it in the message handling
+						}	
 					}
 				}
 			}
+			if (events[i].events & EPOLLOUT) {
+				int fd = events[i].data.fd;
+				//std::cout<<"creating a new ptr to client in epollout !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<"\n";
+				std::shared_ptr<Client> client;
+				try
+				{
+					client = server.get_Client(fd);  // Get the client object
+					
+				}
+				catch(const ServerException& e)
+				{
+					if (e.getType() == ErrorType::NO_Client_INMAP)
+						continue ;
+				}
+				
+				
+				//std::cout<<"did we manage to access the client here \n";
+				while (!client->isMsgEmpty()) {
+					std::string msg = client->getMsg().getQueueMessage();
+					//int flag = 1;
+					//socklen_t len = sizeof(flag);
+					//setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (void*)&flag, sizeof(flag));
+
+					ssize_t bytes_sent = send(fd, msg.c_str(), msg.length(), 0); //safesend
+					//getsockopt(fd, SOL_SOCKET, SO_ERROR, &flag, &len);
+					if (bytes_sent == -1) {
+						if (errno == EAGAIN || errno == EWOULDBLOCK) break;  // 🔥 No more space, stop writing
+						else perror("send error");
+					}
+					if (bytes_sent > 0) {
+						client->getMsg().removeQueueMessage();  // ✅ Remove sent message
+					}
+					struct epoll_event event;
+					event.events = EPOLLIN | EPOLLOUT | EPOLLET;
+					event.data.fd = fd;
+					epoll_ctl(epollfd, EPOLL_CTL_MOD, fd, &event);
+					// Disable EPOLLOUT if no more messages need to be sent
+					/*if (client->isMsgEmpty()) {
+						struct epoll_event ev;
+						ev.events = EPOLLIN;  // ✅ Go back to read-only mode
+						ev.data.fd = fd;
+						epoll_ctl(server.getFd(), EPOLL_CTL_MOD, fd, &ev);
+					}*/
+				}
+			}
+
+
 		}
 	}
 	return 0;
@@ -160,8 +224,7 @@ int main(int argc, char** argv)
 	// set up server socket through utility function
 	if (setupServerSocket(server) == errVal::FAILURE)
 		std::cout<<"server socket setup failure"<<std::endl;
-	try
-	{
+	try {
 		loop(server); //begin server loop		
 	}
 
@@ -169,13 +232,14 @@ int main(int argc, char** argv)
 	{
 		switch (e.getType())
 		{
-			/*case ErrorType::CLIENT_DISCONNECTED:
+			case ErrorType::CLIENT_DISCONNECTED:
 			{
-				// server.remove_Client(epollfd, fd);				
-				std::cerr << e.what() << '\n';
+				
+				std::cout<<" caught in main \n";				
+				std::cerr << e.what() << " caught in main \n";
 				break;
 
-			}*/
+			}
 			/*case ErrorType::SERVER_SHUTDOWN:
 			{
 
@@ -204,7 +268,11 @@ int main(int argc, char** argv)
 
 			}
 			default:
-				std::cerr << "Unknown error occurred" << '\n';
+			{
+				std::cerr << e.what() << " caught in main \n";
+				std::cerr << "main Unknown error occurred" << '\n';
+
+			}
 		}
 		
 	} // this is a fail safe catch forf any exception we have forgotten to handle or thrownfrom unknown
