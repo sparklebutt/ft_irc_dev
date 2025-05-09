@@ -30,14 +30,14 @@
 class Client;
 class Server {
 	private:
-	int _port;
+		int _port;
 		int _client_count = 0;
 		int _fd;
 		int _current_client_in_progress;
 		int _signal_fd;
 		int _epoll_fd;
 		std::string _password;
-		//new
+
 		std::map<int, std::shared_ptr<Client>> _Clients;
 		std::map<int, int> _timer_map;
 		// start of new section
@@ -46,7 +46,7 @@ class Server {
 		std::map<int, struct epoll_event> _epollEventMap;
 		static const std::set<std::string> _illegal_nicknames;
 		// Helper function to convert a string to lowercase (defined inline in header)
-		std::deque<std::string> _server_broadcasts;
+		std::deque<std::string> _server_broadcasts; // for broadcasting server wide messages
 		static std::string to_lowercase(const std::string& s) {
 			std::string lower_s = s;
 			std::transform(lower_s.begin(), lower_s.end(), lower_s.begin(),
@@ -103,7 +103,7 @@ class Server {
 		std::map<int, struct epoll_event> get_struct_map() {return _epollEventMap; };
 		std::string get_password() const;
 		std::string get_nickname(int fd) const;  // ai
-		
+		std::deque<std::string>& getBroadcastQueue() { return _server_broadcasts; }
 		// returns a Client shared_pointer from the map
 		std::shared_ptr<Client> get_Client(int fd);
 		// returns the whole map 
@@ -115,6 +115,7 @@ class Server {
 		void shutdown();
 		bool checkTimers(int fd);
 		void remove_fd(int fd); // ai // we have remove client function , this could be called in there, to remove all new maps
+		void removeQueueMessage() { _server_broadcasts.pop_front();};
 		// epoll stuff
 		int setup_epoll(int epoll_fd, int fd, uint32_t events);
 		int setup_epoll_timer(int epoll_fd, int timeout_seconds);

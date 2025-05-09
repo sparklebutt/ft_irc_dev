@@ -76,17 +76,24 @@ int Server::get_current_client_in_progress() const{
  * the client fd is added to the epoll and then added to the Client map. a welcome message
  * is sent as an acknowlegement message back to irssi.
  */
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/tcp.h>
+#include <netinet/in.h>
 void Server::create_Client(int epollfd) {
  	// Handle new incoming connection
 	int client_fd = accept(getFd(), nullptr, nullptr);
-
  	if (client_fd < 0) {
 		throw ServerException(ErrorType::ACCEPT_FAILURE, "debuggin: create Client");
 	} else {
- 		make_socket_unblocking(client_fd);
-		//int flag = 1;
+		int flag = 1;
+		int buf_size = 1024;
+
+		setsockopt(client_fd, SOL_SOCKET, SO_SNDBUF, &buf_size, sizeof(buf_size));
+		setsockopt(client_fd, IPPROTO_TCP, TCP_NODELAY, (void*)&flag, sizeof(flag));	
+		make_socket_unblocking(client_fd);
 		//setsockopt(client_fd, SOL_SOCKET, SO_KEEPALIVE, &flag, sizeof(flag)); 
-		setup_epoll(epollfd, client_fd, EPOLLIN | EPOLLOUT | EPOLLET); // | EPOLLET); // | EPOLLOUT);
+		setup_epoll(epollfd, client_fd, EPOLLIN | EPOLLOUT | EPOLLET); // not a fan of epollet
 		int timer_fd = setup_epoll_timer(epollfd, config::TIMEOUT_CLIENT);
 		// errro handling if timer_fd failed
 		// create an instance of new Client and add to server map
@@ -98,7 +105,7 @@ void Server::create_Client(int epollfd) {
 		set_current_client_in_progress(client_fd);
 
 		if (!_Clients[client_fd]->get_acknowledged()){
-			// send message back so server dosnt think we are dead
+			// send message back so server dosnt think we are dead this has to be handled through epoll too damn it 
 			send(client_fd, IRCMessage::welcome_msg, strlen(IRCMessage::welcome_msg), 0);
 			_Clients[client_fd]->set_acknowledged();
 		}

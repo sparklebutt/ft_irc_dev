@@ -4,7 +4,7 @@
 #include "Server.hpp"
 #include "config.h"
 sigset_t sigmask;
-
+// rename file to signals / handle signals?
 //may not need anymore
 int signal_mask()
 {
@@ -16,8 +16,7 @@ int signal_mask()
 		exit(EXIT_FAILURE);
 	}
 	fd = signalfd(-1, &sigmask, SFD_NONBLOCK);
-	if (fd == -1)
-	{
+	if (fd == -1) {
 		perror("something wrong with sig fd");
 		exit(EXIT_FAILURE);
 	}
@@ -51,5 +50,18 @@ void setup_signal_handler()
 	sigaction(SIGINT, &sa, nullptr);
 	sigaction(SIGTERM, &sa, nullptr);
 	//_epollEventMap[]
+}
 
+int manage_signal_events(int signal_fd)
+{
+	struct signalfd_siginfo si;
+	read(signal_fd, &si, sizeof(si));
+	if (si.ssi_signo == SIGUSR1) {
+		std::cout << "SIGNAL received! EPOLL CAUGHT IT YAY..." << std::endl;
+		// how to force certian signals to catch and handle
+		//server.shutdown();
+		return 2; //config continue? break
+		//break;
+	}
+	return -1;
 }
