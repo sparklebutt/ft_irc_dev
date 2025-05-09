@@ -38,6 +38,7 @@ class Client {
 		void set_acknowledged();
 		int get_timer_fd();
 		std::string getNickname();
+		std::string& getNicknameRef();
 		std::string getClientName();
 		std::string getfullName();
 		void setDefaults(int num);

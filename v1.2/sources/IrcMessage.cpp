@@ -199,7 +199,6 @@ void IrcMessage::printMessage(const IrcMessage& msg)
 void IrcMessage::handle_message(Client& Client, const std::string message, Server& server)
 {
 	parse(message);
-	int client_fd = Client.getFd();
 	/*if (getCommand() == "QUIT")
 	{
 		std::cout<<"QUIT called removing client \n";
@@ -207,21 +206,8 @@ void IrcMessage::handle_message(Client& Client, const std::string message, Serve
 		return ;
 	}*/
 	if (getCommand() == "NICK"){
-		if(server.check_and_set_nickname(getParam(0), Client.getFd()))
-		{
-			// store previouse nick name so we can tell irssi who we where
-			std::string oldnick = Client.getNickname();
-			Client.change_nickname(getParam(0), Client.getFd());
-			dispatch_nickname(client_fd, oldnick, Client.getNickname(), server.get_map());
-			/*int flags;
-			socklen_t len = sizeof(flags);
-			getsockopt(client_fd, SOL_SOCKET, SO_ERROR, &flags, &len);
-			if (flags == 0) {
-    			std::cout << "Socket is writable but EPOLLOUT not firing!" << std::endl;
-			}*/
-
-			//if (!Client.isMsgEmpty())
-			//	server.readyEpollout(client_fd, server.getFd());
+		if(server.check_and_set_nickname(getParam(0), Client.getFd())) {
+			prep_nickname_msg(Client.getNicknameRef(), getQue(), server.getBroadcastQueue());;
 		}
 		else
 		{

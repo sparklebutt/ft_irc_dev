@@ -1,4 +1,3 @@
-//#include <map>
 #include "Client.hpp"
 #include "IrcResources.hpp"
 #include <memory>
@@ -7,50 +6,28 @@
 #include <sys/socket.h>
 #include <string>
 #include <iostream>
+#include <deque>
 
+/**
+ * @brief here we prepare the message queues fore sending in what will ultimatley be the
+ * one and only sending function . We pass everything by reference so we dont have to pass the objects, 
+ * doing so allows us to change the value of the varaible without risking access to anything else inside the classes.
+ * 
+ * @param nickname reference  
+ * @param messageQue refernce
+ * @param broadcastQueue reference
+ */
+void IrcMessage::prep_nickname_msg(std::string& nickname, std::deque<std::string>& messageQue, std::deque<std::string>&broadcastQueue)
+{	
+		std::string test = getParam(0);
 
+		std::string oldnick = nickname;
+		nickname = getParam(0);
+		std::string cli = "client"; // username?
+		std::string user_message = RPL_NICK_CHANGE(oldnick, cli, nickname);
+		std::string serverBroadcast_message= SERVER_MSG_NICK_CHANGE(oldnick, nickname);
 
-void IrcMessage::dispatch_nickname(int client_fd, const std::string& oldnick, std::string newnick, std::map<int, std::shared_ptr <Client>>& clientsMap) {
+		messageQue.push_back(user_message);
+		broadcastQueue.push_back(serverBroadcast_message);
 
-	std::string cli = "client"; // username?
-	std::string user_message = RPL_NICK_CHANGE(oldnick, cli, newnick);
-	std::string broadcast_message= SERVER_MSG_NICK_CHANGE(oldnick, newnick);
-	//int flag = 1; //does this need to change for any message??
-	
-	
-	for (auto& pair : clientsMap) {
-		std::cout<<"checking fd value = "<<pair.first<<"\n";
-		if (pair.first == client_fd)
-		{
-			_messageQue.push_back(user_message);
-			std::cout<<"user message going in = "<<getQueueMessage()<<"\n";
-			//send(pair.first, user_message.c_str(), user_message.length(), 0);
-
-		}
-		else
-		{
-			pair.second->getMsg().queueMessage(broadcast_message); //_messageQue.push_back(broadcast_message);
-			std::cout<<"broadcast message going in = "<<pair.second->getMsg().getQueueMessage()<<"\n";
-			//send(pair.first, broadcast_message.c_str(), broadcast_message.length(), 0);
-
-		}
-		//setsockopt(pair.first, SOL_SOCKET, SO_KEEPALIVE, &flag, sizeof(flag));
-		        // Enable EPOLLOUT for clients that need to send data
-	}
-//	broadcast(client_fd, user_message, broadcast_message);
 }
-
-/*void broadcast(int client_fd, std::map<int, std::shared_ptr <Client>>& clientsMap) {
-	int flag = 1; //does this need to change for any message??
-	for (auto& pair : clientsMap) {
-        // Use pair.first (client_fd) and pair.second (Client object) here
-		std::cout<<"checking fd value = "<<pair.first<<"\n";
-
-		if (pair.first == client_fd)
-			send(pair.first, user_message.c_str(), user_message.length(), 0);
-		else
-			send(pair.first, broadcast_message.c_str(), broadcast_message.length(), 0);
-
-		setsockopt(pair.first, SOL_SOCKET, SO_KEEPALIVE, &flag, sizeof(flag));
-	}
-}*/

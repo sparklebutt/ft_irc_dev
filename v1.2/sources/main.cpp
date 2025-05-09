@@ -42,6 +42,7 @@
  * how to test if everything is non blocking MAX CLIENTS IS MAX 510 DUE TO USING EPOLL FOR TIMER_FD ALSO,
  * SIGNAL FD AND CLIENT FDS AND SERVER FD
  */
+
 int loop(Server &server)
 {
 	int epollfd = 0;
@@ -56,11 +57,11 @@ int loop(Server &server)
 		int nfds = epoll_pwait(epollfd, events, config::MAX_CLIENTS, config::TIMEOUT_EPOLL, &sigmask);
 		if (nfds != 0)
 			std::cout << "epoll_wait returned: " << nfds << " events\n";
-			/*if (errno == EINTR) {
-		std::cerr << "accept() interrupted by signal, retrying..." << std::endl;
-	} else if (errno == EMFILE || errno == ENFILE) {
-		std::cerr << "Too many open files—server may need tuning!" << std::endl;
- 	}*/
+		/*if (errno == EINTR) {
+			std::cerr << "accept() interrupted by signal, retrying..." << std::endl;
+		} else if (errno == EMFILE || errno == ENFILE) {
+			std::cerr << "Too many open files—server may need tuning!" << std::endl;
+ 		}*/
 		// if nfds == -1 we have perro we should be able to print with perror.
 		for (int i = 0; i < nfds; i++)
 		{
@@ -71,18 +72,23 @@ int loop(Server &server)
           << ((events[i].events & EPOLLERR) ? " ERROR " : "")
           << std::endl;
 
+		  //if ((events[i].events & EPOLLIN) &&  (events[i].events & EPOLLOUT))
+		//		std::cout<<"IF YOU SEE THIS EVERYTIME THERE IS SOMETHING NOT WORKING , WE FOUND THE SPOT  \n";
 			if (events[i].events & EPOLLIN) {
                 int fd = events[i].data.fd; // Get the associated file descriptor
 				
-				if (fd == server.get_signal_fd()) { 
-					struct signalfd_siginfo si;
+				if (fd == server.get_signal_fd()) {
+					// must test signals properly still
+					if (manage_signal_events(server.get_signal_fd()) == 2)
+						break;
+					/*struct signalfd_siginfo si;
 					read(server.get_signal_fd(), &si, sizeof(si));
 					if (si.ssi_signo == SIGUSR1) {
 						std::cout << "SIGNAL received! EPOLL CAUGHT IT YAY..." << std::endl;
 						// how to force certian signals to catch and handle
 						//server.shutdown();
 						break;
-					}
+					}*/
 				}
 				if (fd == server.getFd()) {
 					try {
@@ -101,8 +107,6 @@ int loop(Server &server)
 							server.get_Client(fd)->receive_message(fd, server); // add msg object here
 							//std::cout<<" message recived\n";
 
-							//if (server.get_Client(fd)->isMsgEmpty())
-							//readyEpollout(fd, server.getFd());
 							std::cout<<"after ecive message ";
 							for (const auto& [fd, ev] : server.get_struct_map()) {
 								std::cout << "FD " << fd << " → Events: "
@@ -138,37 +142,61 @@ int loop(Server &server)
 						continue ;
 				}
 				
-				
-				//std::cout<<"did we manage to access the client here \n";
 				while (!client->isMsgEmpty()) {
 					std::string msg = client->getMsg().getQueueMessage();
-					//int flag = 1;
-					//socklen_t len = sizeof(flag);
-					//setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (void*)&flag, sizeof(flag));
-
+					std::cout<<"checking the message from que before send ["<< msg <<"]\n";
 					ssize_t bytes_sent = send(fd, msg.c_str(), msg.length(), 0); //safesend
-					//getsockopt(fd, SOL_SOCKET, SO_ERROR, &flag, &len);
 					if (bytes_sent == -1) {
-						if (errno == EAGAIN || errno == EWOULDBLOCK) break;  // 🔥 No more space, stop writing
+						if (errno == EAGAIN || errno == EWOULDBLOCK)
+						{
+							std::cout<<"triggering the in the actual message conts???????????????????????????????????????????\n";
+							continue;  //no more space, stop writing
+						}
+						
 						else perror("send error");
 					}
 					if (bytes_sent > 0) {
-						client->getMsg().removeQueueMessage();  // ✅ Remove sent message
+						usleep(5000); //wait incase we are going too fast and so sends dont complete
+						client->getMsg().removeQueueMessage(); 
+
 					}
-					struct epoll_event event;
-					event.events = EPOLLIN | EPOLLOUT | EPOLLET;
-					event.data.fd = fd;
-					epoll_ctl(epollfd, EPOLL_CTL_MOD, fd, &event);
-					// Disable EPOLLOUT if no more messages need to be sent
-					/*if (client->isMsgEmpty()) {
-						struct epoll_event ev;
-						ev.events = EPOLLIN;  // ✅ Go back to read-only mode
-						ev.data.fd = fd;
-						epoll_ctl(server.getFd(), EPOLL_CTL_MOD, fd, &ev);
+					/*if (bytes_sent == 0)
+					{
+						
+	
 					}*/
+					if (!client->isMsgEmpty())
+					{
+						struct epoll_event event;
+						event.events = EPOLLIN | EPOLLOUT | EPOLLET;
+						event.data.fd = fd;
+						epoll_ctl(epollfd, EPOLL_CTL_MOD, fd, &event);
+					}
+				}
+				std::cout<<"client messages should be sent by now !!!!\n";
+				while(!server.getBroadcastQueue().empty())
+				{
+					std::string msg = server.getBroadcastQueue().front();
+
+					for (auto& pair : server.get_map()) {
+						ssize_t bytes_sent = send(pair.first, msg.c_str(), msg.length(), 0);
+						if (bytes_sent == -1) {
+							if (errno == EAGAIN || errno == EWOULDBLOCK)
+							{
+								std::cout<<"triggering the conts???????????????????????????????????????????\n";
+								continue;  //No more space, stop writing
+							}
+							else perror("send error");
+						}
+
+						/*if (bytes_sent > 0) {
+						
+						}*/
+					}
+					server.removeQueueMessage();  //remove sent message
+
 				}
 			}
-
 
 		}
 	}

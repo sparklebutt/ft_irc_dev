@@ -45,6 +45,10 @@ std::string Client::getNickname(){
 	return _nickName;
 }
 
+std::string& Client::getNicknameRef(){
+	return _nickName;
+}
+
 std::string Client::getClientName(){
 	return _ClientName;
 }

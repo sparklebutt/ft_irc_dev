@@ -46,6 +46,7 @@ class IrcMessage
 		void removeQueueMessage() { _messageQue.pop_front();};
 		std::deque<std::string>& getQue() { return _messageQue; };
 		std::string getQueueMessage() { return _messageQue.front();};
+		void prep_nickname_msg(std::string& nickname,  std::deque<std::string>& messageQue, std::deque<std::string>& broadcastQueue);
 
 		void handle_message(Client& Client, const std::string message, Server& server);
 		void dispatch_nickname(int client_fd, const std::string& oldnick, std::string newnickname, std::map<int, std::shared_ptr <Client>>& clientsMap);
