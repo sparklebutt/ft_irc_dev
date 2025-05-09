@@ -84,9 +84,9 @@ void Server::create_Client(int epollfd) {
 		throw ServerException(ErrorType::ACCEPT_FAILURE, "debuggin: create Client");
 	} else {
  		make_socket_unblocking(client_fd);
-		int flag = 1;
-		setsockopt(client_fd, SOL_SOCKET, SO_KEEPALIVE, &flag, sizeof(flag)); 
-		setup_epoll(epollfd, client_fd, EPOLLIN); // | EPOLLET); // | EPOLLOUT);
+		//int flag = 1;
+		//setsockopt(client_fd, SOL_SOCKET, SO_KEEPALIVE, &flag, sizeof(flag)); 
+		setup_epoll(epollfd, client_fd, EPOLLIN | EPOLLOUT | EPOLLET); // | EPOLLET); // | EPOLLOUT);
 		int timer_fd = setup_epoll_timer(epollfd, config::TIMEOUT_CLIENT);
 		// errro handling if timer_fd failed
 		// create an instance of new Client and add to server map
@@ -125,6 +125,10 @@ void Server::remove_Client(int epollfd, int client_fd) {
 	close(get_Client(client_fd)->get_timer_fd());
 	epoll_ctl(epollfd, EPOLL_CTL_DEL, get_Client(client_fd)->get_timer_fd(), 0);
 	_Clients.erase(client_fd);
+
+	//std::map<int, struct epoll_event> _epollEventMap;
+	//std::map<std::string, int> _nickname_to_fd;
+	//std::map<int, std::string> _fd_to_nickname;
 	_client_count--;
 	std::cout<<"client has been removed"<<std::endl;
 }
@@ -151,7 +155,7 @@ std::map<int, std::shared_ptr<Client>>& Server::get_map() {
 }
 
 std::map<int, std::string>& Server::get_fd_to_nickname() {
-	return fd_to_nickname;
+	return _fd_to_nickname;
 }
 
 std::string Server::get_password() const {
@@ -174,7 +178,10 @@ void Server::handle_client_connection_error(ErrorType err_type) {
 			_current_client_in_progress = 0;
 			break;
 		} default:
-			std::cerr << "Unknown error occurred" << std::endl;
+			send(_current_client_in_progress, IRCMessage::error_msg, strlen(IRCMessage::error_msg), 0);
+			close(_current_client_in_progress);
+			_current_client_in_progress = 0;
+			std::cerr << "server Unknown error occurred" << std::endl;
 			break;
 	}
 }
@@ -233,7 +240,8 @@ bool Server::checkTimers(int fd) {
 		return false;
 	} // did not find client on the list eek
     if (clientit->second->get_failed_response_counter() == 3) {
-        remove_Client(_epoll_fd, client_fd);
+		std::cout<<"timer sup removing client \n";
+		remove_Client(_epoll_fd, client_fd);
         _timer_map.erase(fd);
         return false;
     }
@@ -277,11 +285,8 @@ bool Server::check_and_set_nickname(std::string nickname, int fd) {
 
     // check if nickname exists for anyone
     auto nick_it = _nickname_to_fd.find(processed_nickname);
-	std::cout<<"nickname = "<<nickname<<" ____________________________________________"<<"\n";
-	std::cout<<"proccessed nickname "<<processed_nickname<<"____________________________________________"<<"\n";
 	if (nick_it != _nickname_to_fd.end()) {
         // Nickname exists. Is it the same Client trying to set their current nick?
-		std::cout<<"we should be looping here ____________________________________________"<<"\n";
         if (nick_it->second == fd) {
             // FD already head requested nickname.
             std::cout << "#### Nickname '" << nickname << "' for fd " << fd << ": Already set. No change needed." << std::endl;
@@ -326,8 +331,8 @@ bool Server::check_and_set_nickname(std::string nickname, int fd) {
 }
 
 std::string Server::get_nickname(int fd) const {
-     auto it = fd_to_nickname.find(fd);
-     if (it != fd_to_nickname.end()) {
+     auto it = _fd_to_nickname.find(fd);
+     if (it != _fd_to_nickname.end()) {
          return it->second; // Return the nickname
      }
      return "";
@@ -336,8 +341,8 @@ std::string Server::get_nickname(int fd) const {
 int Server::get_fd(const std::string& nickname) const {
      std::string processed_nickname = to_lowercase(nickname);
 
-     auto it = nickname_to_fd.find(processed_nickname);
-     if (it != nickname_to_fd.end()) {
+     auto it = _nickname_to_fd.find(processed_nickname);
+     if (it != _nickname_to_fd.end()) {
          return it->second; // Return the fd
      }
      return -1; // nickname not found
@@ -345,8 +350,8 @@ int Server::get_fd(const std::string& nickname) const {
 
 void Server::remove_fd(int fd) {
     // Call this when a client disconnects to clean up their nickname entry
-    auto fd_it = fd_to_nickname.find(fd);
-    if (fd_it != fd_to_nickname.end()) {
+    auto fd_it = _fd_to_nickname.find(fd);
+    if (fd_it != _fd_to_nickname.end()) {
 
         // find the nickname from the fd
 		std::string old_nickname = fd_it->second;
@@ -354,9 +359,9 @@ void Server::remove_fd(int fd) {
 		std::cout << "#### Removing fd " << fd << " and nickname '" << old_nickname << "' due to disconnect." << std::endl;
 
         // Remove from nickname_to_fd map using the nickname
-        nickname_to_fd.erase(old_nickname);
+        _nickname_to_fd.erase(old_nickname);
         // Remove from fd_to_nickname map using the iterator
-        fd_to_nickname.erase(fd_it);
+        _fd_to_nickname.erase(fd_it);
 
         std::cout << "#### Cleaned up entries for fd " << fd << "." << std::endl;
     } else {

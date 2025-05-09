@@ -8,7 +8,8 @@
 #include <cctype>    // ai For std::tolower, std::islower
 #include <vector>    // ai Just for the initial list concept, set is better for lookup
 //#include "Client.hpp" // can this be handled withoout including the whole hpp
-
+#include <sys/epoll.h>
+#include <deque> // server messages
 // connection registration
 // https://modern.ircdocs.horse/#connection-registration
 
@@ -36,15 +37,16 @@ class Server {
 		int _signal_fd;
 		int _epoll_fd;
 		std::string _password;
-		//std::map<int, std::pair<std::shared_ptr<Client>, int >>_Clients; //unordered map?
 		//new
 		std::map<int, std::shared_ptr<Client>> _Clients;
 		std::map<int, int> _timer_map;
 		// start of new section
 		std::map<std::string, int> nickname_to_fd;
 		std::map<int, std::string> fd_to_nickname;
+		std::map<int, struct epoll_event> _epollEventMap;
 		static const std::set<std::string> _illegal_nicknames;
 		// Helper function to convert a string to lowercase (defined inline in header)
+		std::deque<std::string> _server_broadcasts;
 		static std::string to_lowercase(const std::string& s) {
 			std::string lower_s = s;
 			std::transform(lower_s.begin(), lower_s.end(), lower_s.begin(),
@@ -97,6 +99,8 @@ class Server {
 		int get_client_count() const;
 		int get_event_pollfd() const;
 		int get_current_client_in_progress() const;
+		//epoll_event& get_epoll_event_struct(int fd);
+		std::map<int, struct epoll_event> get_struct_map() {return _epollEventMap; };
 		std::string get_password() const;
 		std::string get_nickname(int fd) const;  // ai
 		
@@ -110,7 +114,14 @@ class Server {
 		void acknowladgeClient();
 		void shutdown();
 		bool checkTimers(int fd);
-		void remove_fd(int fd);  // ai
+		void remove_fd(int fd); // ai // we have remove client function , this could be called in there, to remove all new maps
+		// epoll stuff
+		int setup_epoll(int epoll_fd, int fd, uint32_t events);
+		int setup_epoll_timer(int epoll_fd, int timeout_seconds);
+		int create_epollfd();
+		int createTimerFD(int timeout_seconds);
+		void resetClientTimer(int timer_fd, int timeout_seconds);
+		void readyEpollout(int client_fd, int epoll_fd);
 	};
 	
 	/**
