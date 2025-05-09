@@ -132,7 +132,11 @@ void Server::remove_Client(int epollfd, int client_fd) {
 	close(get_Client(client_fd)->get_timer_fd());
 	epoll_ctl(epollfd, EPOLL_CTL_DEL, get_Client(client_fd)->get_timer_fd(), 0);
 	_Clients.erase(client_fd);
+	_epollEventMap.erase(client_fd);
+	_fd_to_nickname.erase(client_fd);
+	//_nickname_to_fd.erase(client_fd);
 
+	//_epollEventMap.erase(client_fd);
 	//std::map<int, struct epoll_event> _epollEventMap;
 	//std::map<std::string, int> _nickname_to_fd;
 	//std::map<int, std::string> _fd_to_nickname;
@@ -211,11 +215,16 @@ void Server::shutdown() {
 	// delete Clients
 	for (std::map<int, std::shared_ptr<Client>>::iterator it = _Clients.begin(); it != _Clients.end(); it++){
 		it->second.reset();
+		it->second->getMsg().clearQue();
 	}
 	_timer_map.clear();
 	_Clients.clear();
 	// delete channels
+	_epollEventMap.clear();
+	_nickname_to_fd.clear();
+	_server_broadcasts.clear();
 
+	//_epollEventMap.clear();
 	std::cout<<"server shutdown completed"<<std::endl;
 	exit(0);
 }
