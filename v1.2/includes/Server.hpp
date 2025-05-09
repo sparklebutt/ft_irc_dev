@@ -122,7 +122,8 @@ class Server {
 		int create_epollfd();
 		int createTimerFD(int timeout_seconds);
 		void resetClientTimer(int timer_fd, int timeout_seconds);
-		void readyEpollout(int client_fd, int epoll_fd);
+		void send_message(std::shared_ptr<Client> client);
+		void send_server_broadcast();
 	};
 	
 	/**
