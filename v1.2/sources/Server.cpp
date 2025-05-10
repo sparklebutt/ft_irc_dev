@@ -132,7 +132,11 @@ void Server::remove_Client(int epollfd, int client_fd) {
 	close(get_Client(client_fd)->get_timer_fd());
 	epoll_ctl(epollfd, EPOLL_CTL_DEL, get_Client(client_fd)->get_timer_fd(), 0);
 	_Clients.erase(client_fd);
+	_epollEventMap.erase(client_fd);
+	_fd_to_nickname.erase(client_fd);
+	//_nickname_to_fd.erase(client_fd);
 
+	//_epollEventMap.erase(client_fd);
 	//std::map<int, struct epoll_event> _epollEventMap;
 	//std::map<std::string, int> _nickname_to_fd;
 	//std::map<int, std::string> _fd_to_nickname;
@@ -211,11 +215,16 @@ void Server::shutdown() {
 	// delete Clients
 	for (std::map<int, std::shared_ptr<Client>>::iterator it = _Clients.begin(); it != _Clients.end(); it++){
 		it->second.reset();
+		it->second->getMsg().clearQue();
 	}
 	_timer_map.clear();
 	_Clients.clear();
 	// delete channels
+	_epollEventMap.clear();
+	_nickname_to_fd.clear();
+	_server_broadcasts.clear();
 
+	//_epollEventMap.clear();
 	std::cout<<"server shutdown completed"<<std::endl;
 	exit(0);
 }
@@ -374,4 +383,62 @@ void Server::remove_fd(int fd) {
     } else {
          std::cout << "#### No nickname found for fd " << fd << " upon disconnect." << std::endl;
     }
+}
+
+void Server::send_message(std::shared_ptr<Client> client)
+{
+	int fd = client->getFd();
+	while (!client->isMsgEmpty()) {
+		std::string msg = client->getMsg().getQueueMessage();
+		std::cout<<"checking the message from que before send ["<< msg <<"]\n";
+		ssize_t bytes_sent = send(fd, msg.c_str(), msg.length(), 0); //safesend
+		if (bytes_sent == -1) {
+			if (errno == EAGAIN || errno == EWOULDBLOCK) {
+				std::cout<<"triggering the in the actual message conts???????????????????????????????????????????\n";
+				continue;  //no more space, stop writing
+			}
+			
+			else perror("send error");
+		}
+		if (bytes_sent > 0) {
+			usleep(5000); //wait incase we are going too fast and so sends dont complete
+			client->getMsg().removeQueueMessage(); 
+
+		}
+		/*if (bytes_sent == 0)
+		{
+			
+
+		}*/
+		if (!client->isMsgEmpty()) {
+			struct epoll_event event;
+			event.events = EPOLLIN | EPOLLOUT | EPOLLET;
+			event.data.fd = fd;
+			epoll_ctl(_epoll_fd, EPOLL_CTL_MOD, fd, &event);
+		}
+	}
+
+}
+void Server::send_server_broadcast()
+{
+	while(!_server_broadcasts.empty())
+	{
+		std::string msg = _server_broadcasts.front();
+
+		for (auto& pair : _Clients ) {
+			ssize_t bytes_sent = send(pair.first, msg.c_str(), msg.length(), 0);
+			if (bytes_sent == -1) {
+				if (errno == EAGAIN || errno == EWOULDBLOCK) {
+					std::cout<<"triggering the conts???????????????????????????????????????????\n";
+					continue;  //No more space, stop writing
+				}
+				else perror("send error");
+			}
+			/*if (bytes_sent > 0) {
+			
+			}*/
+		}
+		_server_broadcasts.pop_front();  //remove sent message
+
+	}
 }

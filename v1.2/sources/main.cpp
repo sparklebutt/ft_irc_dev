@@ -131,73 +131,15 @@ int loop(Server &server)
 				int fd = events[i].data.fd;
 				//std::cout<<"creating a new ptr to client in epollout !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<"\n";
 				std::shared_ptr<Client> client;
-				try
-				{
-					client = server.get_Client(fd);  // Get the client object
-					
-				}
-				catch(const ServerException& e)
-				{
+				try {
+					server.send_message(server.get_Client(fd));
+					std::cout<<"client messages should be sent by now !!!!\n";
+					server.send_server_broadcast();
+				} catch(const ServerException& e) {
 					if (e.getType() == ErrorType::NO_Client_INMAP)
 						continue ;
 				}
-				
-				while (!client->isMsgEmpty()) {
-					std::string msg = client->getMsg().getQueueMessage();
-					std::cout<<"checking the message from que before send ["<< msg <<"]\n";
-					ssize_t bytes_sent = send(fd, msg.c_str(), msg.length(), 0); //safesend
-					if (bytes_sent == -1) {
-						if (errno == EAGAIN || errno == EWOULDBLOCK)
-						{
-							std::cout<<"triggering the in the actual message conts???????????????????????????????????????????\n";
-							continue;  //no more space, stop writing
-						}
-						
-						else perror("send error");
-					}
-					if (bytes_sent > 0) {
-						usleep(5000); //wait incase we are going too fast and so sends dont complete
-						client->getMsg().removeQueueMessage(); 
-
-					}
-					/*if (bytes_sent == 0)
-					{
-						
-	
-					}*/
-					if (!client->isMsgEmpty())
-					{
-						struct epoll_event event;
-						event.events = EPOLLIN | EPOLLOUT | EPOLLET;
-						event.data.fd = fd;
-						epoll_ctl(epollfd, EPOLL_CTL_MOD, fd, &event);
-					}
-				}
-				std::cout<<"client messages should be sent by now !!!!\n";
-				while(!server.getBroadcastQueue().empty())
-				{
-					std::string msg = server.getBroadcastQueue().front();
-
-					for (auto& pair : server.get_map()) {
-						ssize_t bytes_sent = send(pair.first, msg.c_str(), msg.length(), 0);
-						if (bytes_sent == -1) {
-							if (errno == EAGAIN || errno == EWOULDBLOCK)
-							{
-								std::cout<<"triggering the conts???????????????????????????????????????????\n";
-								continue;  //No more space, stop writing
-							}
-							else perror("send error");
-						}
-
-						/*if (bytes_sent > 0) {
-						
-						}*/
-					}
-					server.removeQueueMessage();  //remove sent message
-
-				}
 			}
-
 		}
 	}
 	return 0;
