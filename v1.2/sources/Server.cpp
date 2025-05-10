@@ -23,6 +23,7 @@ Server::Server(){
 Server::Server(int port , std::string password) {
 	_port = port;
 	_password = password;
+	
 }
 
 // ~~~SETTERS
@@ -208,11 +209,8 @@ void Server::shutdown() {
 	}
 	// close server socket
 	close(_fd);
-	// close signal fd
-	//close(_signal_fd);
-	// close epoll fd
-	// close(_epoll_fd);
-	// delete Clients
+	close(_signal_fd);
+	close(_epoll_fd);
 	for (std::map<int, std::shared_ptr<Client>>::iterator it = _Clients.begin(); it != _Clients.end(); it++){
 		it->second.reset();
 		it->second->getMsg().clearQue();
@@ -222,18 +220,19 @@ void Server::shutdown() {
 	// delete channels
 	_epollEventMap.clear();
 	_nickname_to_fd.clear();
-	_server_broadcasts.clear();
+	_fd_to_nickname.clear();
+	nickname_to_fd.clear();
+	fd_to_nickname.clear();
+	//_illegal_nicknames.clear();
 
-	//_epollEventMap.clear();
+	_server_broadcasts.clear();
+	//_illegal_nicknames.clear();
+
 	std::cout<<"server shutdown completed"<<std::endl;
-	exit(0);
 }
 
 Server::~Server(){
 	shutdown();
-	// delete array/map of Clients
-	// delete array/map of channels
-	/*deconstructor*/
 }
 
 /**
@@ -269,7 +268,7 @@ bool Server::checkTimers(int fd) {
 }
 
 // definition of illegal nick_names ai
-const std::set<std::string> Server::_illegal_nicknames = {
+std::set<std::string> const Server::_illegal_nicknames = {
     "ping", "pong", "server", "root", "nick", "services", "god"
 };
 

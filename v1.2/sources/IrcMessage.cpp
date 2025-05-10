@@ -196,6 +196,7 @@ void IrcMessage::printMessage(const IrcMessage& msg)
  * @param message 
  * @param server 
  */
+// could we do a map of commands to fucntion pointers to handle this withouts ifs ?
 void IrcMessage::handle_message(Client& Client, const std::string message, Server& server)
 {
 	parse(message);

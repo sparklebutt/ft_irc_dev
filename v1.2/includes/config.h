@@ -26,10 +26,10 @@
  * inclusion ammounts in files, lets see
  */
 
-class Server;
+/*class Server;
 namespace Global {
 	inline Server* server = nullptr;
-}
+}*/
 
 enum class ErrorType {
 	CLIENT_DISCONNECTED,

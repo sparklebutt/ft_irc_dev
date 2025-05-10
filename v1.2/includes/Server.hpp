@@ -10,8 +10,11 @@
 //#include "Client.hpp" // can this be handled withoout including the whole hpp
 #include <sys/epoll.h>
 #include <deque> // server messages
+
 // connection registration
 // https://modern.ircdocs.horse/#connection-registration
+
+
 
 /**
  * @brief The server class manages server related requests and 
@@ -124,18 +127,6 @@ class Server {
 		void resetClientTimer(int timer_fd, int timeout_seconds);
 		void send_message(std::shared_ptr<Client> client);
 		void send_server_broadcast();
-	};
+};
 	
-	/**
-	 * @example template <bool ReadOnly>
-	 typename std::conditional<ReadOnly, const std::map<int, std::pair<std::shared_ptr<Client>, int>>&, std::map<int, std::pair<std::shared_ptr<Client>, int>>&>::type 
-	 Server::get_map() {
-		return _Clients;
-		}
-		const std::map<int, std::pair<std::shared_ptr<Client>, int>>& readonly_Clients = server.get_map<true>(); // Read only access
-		std::map<int, std::pair<std::shared_ptr<Client>, int>>& modifiable_Clients = server.get_map<false>(); 
-		
-		this is if we want to create a const return type so that accidental changes can not be made, it would be good practice to 
-learn to do so 
- */
 
